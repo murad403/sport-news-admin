@@ -40,7 +40,7 @@ export default function AddArticlePage() {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<ArticleFormValues>({
-    resolver: zodResolver(articleSchema),
+    resolver: zodResolver(articleSchema) as any,
     defaultValues: {
       title: "",
       description: "",
