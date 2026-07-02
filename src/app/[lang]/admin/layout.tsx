@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Inbox, Settings, LogOut, Search, Bell, ChevronRight, User, Menu, X, Sparkles, BookOpen, CheckCircle2, AlertCircle, SportShoe, Newspaper } from "lucide-react";
+import { LayoutDashboard, Inbox, Settings, LogOut, Search, Bell, ChevronRight, User, Menu, X, Sparkles, BookOpen, CheckCircle2, AlertCircle, Trophy, Newspaper } from "lucide-react";
 import { ToastProvider, useToast } from "@/components/ui/toast"
 
 
@@ -118,7 +118,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     {
       name: "Sports Categories",
       href: `/${lang}/admin/sports-categories`,
-      icon: SportShoe,
+      icon: Trophy,
       match: (path: string) => path.includes("/sports-categories"),
     },
     {
