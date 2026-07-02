@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, Save, Trash2, Send, Plus, X, Globe, Eye, AlignLeft, Image as ImageIcon } from "lucide-react";
+import { Sparkles, X, Globe, Eye, AlignLeft, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 export default function GenerateArticlePage() {
@@ -10,6 +10,8 @@ export default function GenerateArticlePage() {
   // Generator input states
   const [promptTitle, setPromptTitle] = useState("");
   const [promptDescription, setPromptDescription] = useState("");
+  const [language, setLanguage] = useState("English");
+  const [wordCount, setWordCount] = useState("");
   const tone = "Professional";
 
   // Status states
@@ -60,26 +62,95 @@ export default function GenerateArticlePage() {
   // Generate article details depending on user prompt keywords
   const generateMockArticle = () => {
     const titleLower = promptTitle.toLowerCase();
+    const isItalian = language === "Italian";
     let title = "";
     let content = "";
     let suggestedTags: string[] = [];
 
+    // Helper to adjust word count dynamically
+    const adjustWordCount = (text: string, targetCount: number): string => {
+      const words = text.split(/\s+/);
+      if (words.length >= targetCount) {
+        return words.slice(0, targetCount).join(" ") + "...";
+      }
+      
+      let currentText = text;
+      let currentWords = words.length;
+      
+      const englishFiller = [
+        "\n\nFurthermore, this development has sparked intense debates among experts who question the long-term sustainability of such high-performance regimes.",
+        "\n\nIn addition, fans are expressing their excitement across social media platforms, making it one of the most talked-about topics of the week.",
+        "\n\nAs the season progresses, team coordinators are looking to adjust their training protocols to harness these findings for future matches.",
+        "\n\nUltimately, only time will tell if this milestone will serve as a turning point for the franchise or merely a temporary flash in the pan."
+      ];
+
+      const italianFiller = [
+        "\n\nInoltre, questo sviluppo ha suscitato intensi dibattiti tra gli esperti, che mettono in dubbio la sostenibilità a lungo termine di regimi così ad alte prestazioni.",
+        "\n\nInoltre, i fan stanno esprimendo il loro entusiasmo sulle piattaforme di social media, rendendolo uno degli argomenti più discussi della settimana.",
+        "\n\nCon il progredire della stagione, i coordinatori del team stanno cercando di adattare i loro protocolli di allenamento per sfruttare questi risultati per le partite future.",
+        "\n\nIn definitiva, solo il tempo dirà se questa pietra miliare servirà da punto di svolta per la franchigia o semplicemente come un fuoco di paglia temporaneo."
+      ];
+
+      const filler = isItalian ? italianFiller : englishFiller;
+      let fillerIdx = 0;
+
+      while (currentWords < targetCount && fillerIdx < filler.length) {
+        currentText += filler[fillerIdx];
+        currentWords = currentText.split(/\s+/).length;
+        fillerIdx++;
+      }
+
+      const finalWords = currentText.split(/\s+/);
+      if (finalWords.length > targetCount) {
+        return finalWords.slice(0, targetCount).join(" ") + "...";
+      }
+      return currentText;
+    };
+
     if (titleLower.includes("messi") || titleLower.includes("miami") || titleLower.includes("soccer") || titleLower.includes("football")) {
-      title = promptTitle || "Messi Stuns with Match-Winning Free Kick in Extra Time";
-      content = `In a thrilling encounter that kept fans on the edge of their seats, Lionel Messi once again proved why he is considered the greatest of all time. With the score locked at 2-2 in the 94th minute, Inter Miami was awarded a free kick 25 yards out.\n\nTaking a deep breath, the Argentine talisman curled a sublime strike over the wall, leaving the goalkeeper completely stranded as the ball rattled the top-left corner. The crowd erupted into absolute pandemonium.\n\n"We knew it was going to be a tough battle," said the manager in the post-match conference. "But when you have Lionel on the pitch, you always have a chance. That free kick was pure magic."\n\nThis victory extends Inter Miami's undefeated streak to six matches, catapulting them to the top of the conference standings. Fans and analysts alike are marveling at how Messi, even at this stage of his career, continues to deliver match-winning spectacles under maximum pressure.`;
-      suggestedTags = ["Soccer", "Messi", "Inter Miami", "MLS"];
+      if (isItalian) {
+        title = promptTitle || "Messi stupisce con una punizione vincente nei tempi supplementari";
+        content = `In un incontro emozionante che ha tenuto i tifosi con il fiato sospeso, Lionel Messi ha dimostrato ancora una volta perché è considerato il più grande di tutti i tempi. Con il punteggio bloccato sul 2-2 al 94° minuto, l'Inter Miami ha ottenuto una punizione da 25 metri.\n\nPrendendo un profondo respiro, il talismano argentino ha curvato una traiettoria sublime sopra la barriera, lasciando il portiere completamente immobile mentre la palla si insaccava nell'incrocio dei pali a sinistra. Il pubblico è esploso in un vero e proprio delirio.\n\n"Sapevamo che sarebbe stata una dura battaglia", ha detto l'allenatore nella conferenza stampa post-partita. "Ma quando hai Lionel in campo, hai sempre una possibilità. Quella punizione è stata pura magia."\n\nQuesta vittoria estende la striscia di imbattibilità dell'Inter Miami a sei partite, proiettandola in vetta alla classifica della conference. Tifosi e analisti sono meravigliati di come Messi, anche in questa fase della sua carriera, continui a regalare spettacoli decisivi sotto la massima pressione.`;
+        suggestedTags = ["Calcio", "Messi", "Inter Miami", "MLS"];
+      } else {
+        title = promptTitle || "Messi Stuns with Match-Winning Free Kick in Extra Time";
+        content = `In a thrilling encounter that kept fans on the edge of their seats, Lionel Messi once again proved why he is considered the greatest of all time. With the score locked at 2-2 in the 94th minute, Inter Miami was awarded a free kick 25 yards out.\n\nTaking a deep breath, the Argentine talisman curled a sublime strike over the wall, leaving the goalkeeper completely stranded as the ball rattled the top-left corner. The crowd erupted into absolute pandemonium.\n\n"We knew it was going to be a tough battle," said the manager in the post-match conference. "But when you have Lionel on the pitch, you always have a chance. That free kick was pure magic."\n\nThis victory extends Inter Miami's undefeated streak to six matches, catapulting them to the top of the conference standings. Fans and analysts alike are marveling at how Messi, even at this stage of his career, continues to deliver match-winning spectacles under maximum pressure.`;
+        suggestedTags = ["Soccer", "Messi", "Inter Miami", "MLS"];
+      }
     } else if (titleLower.includes("hamilton") || titleLower.includes("f1") || titleLower.includes("grand prix") || titleLower.includes("race")) {
-      title = promptTitle || "Hamilton Secures Historic Pole Position at Monaco Grand Prix";
-      content = `Lewis Hamilton delivered one of the greatest qualifying laps in Formula 1 history to secure pole position on the streets of Monte Carlo. Navigating the narrow, barrier-lined circuit with millimeter precision, the veteran British driver clocked a blistering time of 1:10.166.\n\nHis teammate finished just 0.082 seconds behind in a tense session, while the current championship leader was forced to settle for third after clipping the guardrail at the swimming pool chicane.\n\n"The car felt like it was on rails today," Hamilton said, visibly emotional after stepping out of the cockpit. "This track requires absolute commitment, and I gave it everything. Starting from pole here is half the battle, but Sunday is where the points are won."\n\nWith overtaking notoriously difficult in Monaco, all eyes will be on the start line. Strategy and tire degradation are expected to play pivotal roles in what promises to be a dramatic grand prix.`;
-      suggestedTags = ["F1", "Hamilton", "Monaco GP", "Motorsport"];
+      if (isItalian) {
+        title = promptTitle || "Hamilton conquista una storica pole position al Gran Premio di Monaco";
+        content = `Lewis Hamilton ha regalato uno dei più grandi giri di qualificazione nella storia della Formula 1 per assicurarsi la pole position sulle strade di Monte Carlo. Navigando nel circuito stretto e delimitato da barriere con precisione millimetrica, il veterano pilota britannico ha registrato un tempo strabiliante di 1:10.166.\n\nIl suo compagno di squadra ha concluso a soli 0,082 secondi di distacco in una sessione tesissima, mentre l'attuale leader del campionato si è dovuto accontentare del terzo posto dopo aver toccato la barriera alla chicane delle Piscine.\n\n"La macchina sembrava sui binari oggi", ha detto Hamilton, visibilmente emozionato dopo essere uscito dall'abitacolo. "Questo tracciato richiede un impegno assoluto e ho dato tutto. Partire dalla pole qui è metà dell'opera, ma la domenica è il giorno in cui si conquistano i punti."\n\nCon i sorpassi notoriamente difficili a Monaco, tutti gli occhi saranno puntati sulla linea di partenza. La strategia e il degrado degli pneumatici dovrebbero giocare ruoli cruciali in quello che si preannuncia come un gran premio drammatico.`;
+        suggestedTags = ["F1", "Hamilton", "Monaco GP", "Automobilismo"];
+      } else {
+        title = promptTitle || "Hamilton Secures Historic Pole Position at Monaco Grand Prix";
+        content = `Lewis Hamilton delivered one of the greatest qualifying laps in Formula 1 history to secure pole position on the streets of Monte Carlo. Navigating the narrow, barrier-lined circuit with millimeter precision, the veteran British driver clocked a blistering time of 1:10.166.\n\nHis teammate finished just 0.082 seconds behind in a tense session, while the current championship leader was forced to settle for third after clipping the guardrail at the swimming pool chicane.\n\n"The car felt like it was on rails today," Hamilton said, visibly emotional after stepping out of the cockpit. "This track requires absolute commitment, and I gave it everything. Starting from pole here is half the battle, but Sunday is where the points are won."\n\nWith overtaking notoriously difficult in Monaco, all eyes will be on the start line. Strategy and tire degradation are expected to play pivotal roles in what promises to be a dramatic grand prix.`;
+        suggestedTags = ["F1", "Hamilton", "Monaco GP", "Motorsport"];
+      }
     } else if (titleLower.includes("lebron") || titleLower.includes("nba") || titleLower.includes("lakers") || titleLower.includes("basketball")) {
-      title = promptTitle || "LeBron James Drops 40 Points in Thrilling Lakers Comeback";
-      content = `LeBron James put on a masterclass performance, scoring 40 points to guide the Los Angeles Lakers to a stunning 115-112 comeback victory after trailing by 18 points in the third quarter.\n\nJames was unstoppable in the paint, hitting 14 of 22 field goals while racking up 9 assists and 8 rebounds. His clutch three-pointer with 12 seconds remaining sealed the victory, leaving the home crowd in raptures.\n\n"We never stopped believing," James remarked in his post-game interview. "We were sluggish in the first half, but we locked down defensively when it mattered most. It's a team game, and everybody contributed."\n\nThis crucial win puts the Lakers back in the playoff conversation, showcasing that even in his 23rd season, LeBron's impact on the court remains unmatched.`;
-      suggestedTags = ["NBA", "LeBron", "Lakers", "Basketball"];
+      if (isItalian) {
+        title = promptTitle || "LeBron James segna 40 punti nell'emozionante rimonta dei Lakers";
+        content = `LeBron James ha offerto una prestazione magistrale, segnando 40 punti per guidare i Los Angeles Lakers a una straordinaria vittoria in rimonta per 115-112 dopo essere stati sotto di 18 punti nel terzo quarto.\n\nJames è stato inarrestabile in area, realizzando 14 tiri dal campo su 22 e collezionando 9 assist e 8 rimbalzi. La sua tripla decisiva a 12 secondi dalla fine ha sigillato la vittoria, mandando in estasi il pubblico di casa.\n\n"Non abbiamo mai smesso di crederci", ha commentato James nella sua intervista post-partita. "Siamo stati lenti nel primo tempo, ma ci siamo sbloccati in difesa quando contava di più. È un gioco di squadra e tutti hanno contribuito."\n\nQuesta vittoria cruciale riporta i Lakers nella corsa ai playoff, dimostrando che anche nella sua 23esima stagione, l'impatto di LeBron sul campo rimane ineguagliabile.`;
+        suggestedTags = ["NBA", "LeBron", "Lakers", "Pallacanestro"];
+      } else {
+        title = promptTitle || "LeBron James Drops 40 Points in Thrilling Lakers Comeback";
+        content = `LeBron James put on a masterclass performance, scoring 40 points to guide the Los Angeles Lakers to a stunning 115-112 comeback victory after trailing by 18 points in the third quarter.\n\nJames was unstoppable in the paint, hitting 14 of 22 field goals while racking up 9 assists and 8 rebounds. His clutch three-pointer with 12 seconds remaining sealed the victory, leaving the home crowd in raptures.\n\n"We never stopped believing," James remarked in his post-game interview. "We were sluggish in the first half, but we locked down defensively when it mattered most. It's a team game, and everybody contributed."\n\nThis crucial win puts the Lakers back in the playoff conversation, showcasing that even in his 23rd season, LeBron's impact on the court remains unmatched.`;
+        suggestedTags = ["NBA", "LeBron", "Lakers", "Basketball"];
+      }
     } else {
-      title = promptTitle || "The Rise of Next-Gen Superstars in Modern Athletics";
-      content = `The sports landscape is experiencing a massive paradigm shift as a new generation of athletes takes center stage. From football pitches to tennis courts, young prodigies under the age of 21 are not just competing—they are dominating.\n\nThis analytical overview explores how improvements in youth training academies, data-driven diet plan optimization, and psychological conditioning have enabled teenagers to perform at elite senior levels.\n\nVeterans are finding themselves pushed to their limits by newcomers who play with no fear and showcase athletic parameters previously thought impossible. Sports scientists suggest that this trend will only accelerate over the next decade.\n\n"The game is faster and more demanding than ever before," commented a leading sports analyst. "What we are witnessing is the evolution of athletic performance in real time."`;
-      suggestedTags = ["Sports Science", "Youth Athletics", "Next-Gen", "Analysis"];
+      if (isItalian) {
+        title = promptTitle || "L'ascesa delle superstar di nuova generazione nell'atletica moderna";
+        content = `Il panorama sportivo sta vivendo un enorme cambio di paradigma mentre una nuova generazione di atleti sale alla ribalta. Dai campi di calcio a quelli da tennis, giovani prodigi sotto i 21 anni non stanno solo gareggiando: stanno dominando.\n\nQuesta panoramica analitica esplora come i miglioramenti nelle accademie giovanili, l'ottimizzazione del piano alimentare basata sui dati e il condizionamento psicologico abbiano permesso ai giovani di esibirsi a livelli senior d'élite.\n\nI veterani si trovano spinti al limite da nuovi arrivati che giocano senza paura e mostrano parametri atletici precedentemente ritenuti impossibili. Gli scienziati dello sport suggeriscono che questa tendenza subirà solo un'accelerazione nel prossimo decennio.\n\n"Il gioco è più veloce e impegnativo che mai", ha commentato un importante analista sportivo. "Ciò a cui stiamo assistendo è l'evoluzione delle prestazioni atletiche in tempo reale."`;
+        suggestedTags = ["Scienza dello Sport", "Atletica Giovani", "Next-Gen", "Analisi"];
+      } else {
+        title = promptTitle || "The Rise of Next-Gen Superstars in Modern Athletics";
+        content = `The sports landscape is experiencing a massive paradigm shift as a new generation of athletes takes center stage. From football pitches to tennis courts, young prodigies under the age of 21 are not just competing—they are dominating.\n\nThis analytical overview explores how improvements in youth training academies, data-driven diet plan optimization, and psychological conditioning have enabled teenagers to perform at elite senior levels.\n\nVeterans are finding themselves pushed to their limits by newcomers who play with no fear and showcase athletic parameters previously thought impossible. Sports scientists suggest that this trend will only accelerate over the next decade.\n\n"The game is faster and more demanding than ever before," commented a leading sports analyst. "What we are witnessing is the evolution of athletic performance in real time."`;
+        suggestedTags = ["Sports Science", "Youth Athletics", "Next-Gen", "Analysis"];
+      }
+    }
+
+    if (wordCount && !isNaN(Number(wordCount))) {
+      content = adjustWordCount(content, Number(wordCount));
     }
 
     setGeneratedTitle(title);
@@ -116,6 +187,8 @@ export default function GenerateArticlePage() {
       setStatus("idle");
       setPromptTitle("");
       setPromptDescription("");
+      setWordCount("");
+      setLanguage("English");
       setArticleImage("");
     }, 1500);
   };
@@ -170,7 +243,7 @@ export default function GenerateArticlePage() {
             {/* Title / Topic */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Article Topic / Working Title
+                Topic
               </label>
               <input
                 type="text"
@@ -182,10 +255,53 @@ export default function GenerateArticlePage() {
               />
             </div>
 
+            {/* Language & Word Count Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Language Dropdown */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Language
+                </label>
+                <div className="relative">
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    disabled={status === "generating"}
+                    className="w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 outline-none transition-all cursor-pointer appearance-none"
+                  >
+                    <option value="English" className="bg-slate-900 text-slate-100">English</option>
+                    <option value="Italian" className="bg-slate-900 text-slate-100">Italian</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Word Count */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Word Count
+                </label>
+                <input
+                  type="number"
+                  placeholder="e.g. 300"
+                  value={wordCount}
+                  onChange={(e) => setWordCount(e.target.value)}
+                  disabled={status === "generating"}
+                  className="w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all"
+                  min={50}
+                  max={5000}
+                />
+              </div>
+            </div>
+
             {/* Context/Description Prompt */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Context / Key Notes (Optional)
+                Additional Instructions (Optional)
               </label>
               <textarea
                 placeholder="List specific events, scores, quotes, or player statistics you want the AI to include..."
