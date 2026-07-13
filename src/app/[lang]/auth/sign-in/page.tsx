@@ -6,10 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, ShieldAlert, Sparkles, BookOpen } from "lucide-react";
+import { Eye, EyeOff, ShieldAlert, BookOpen } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { LoginFormValues, loginSchema } from "@/validation/auth.validation";
-
+import { useSignInMutation } from "@/redux/features/auth/auth.api";
+import { saveToken } from "@/lib/auth";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function SignInPage() {
   const lang = params?.lang || "en";
 
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [signIn, { isLoading: loading }] = useSignInMutation();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -29,20 +30,24 @@ export default function SignInPage() {
     },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    setLoading(true);
-    // Simulate API verification call
-    setTimeout(() => {
-      setLoading(false);
-      if (data.email === "alex.mercer@sportnews.com" || data.email.includes("admin")) {
-        toast("Sign in successful!", "success");
-        router.push(`/${lang}/admin`);
-      } else {
-        // Fallback for easy login in demo
-        toast("Sign in successful! Welcome to Admin Panel", "success");
-        router.push(`/${lang}/admin`);
-      }
-    }, 1500);
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      const response = await signIn({
+        email: data.email,
+        password: data.password,
+      }).unwrap();
+
+      // Save tokens in cookies using saveToken helper function
+      await saveToken(response.access, response.refresh);
+
+      toast("Sign in successful!", "success");
+      
+      // Redirect to /en/admin dashboard page
+      router.push(`/${lang}/admin`);
+    } catch (error: any) {
+      const errorMsg = error?.data?.detail || error?.data?.message || "Invalid credentials. Please try again.";
+      toast(errorMsg, "error");
+    }
   };
 
   return (
@@ -56,18 +61,6 @@ export default function SignInPage() {
         <p className="text-xs text-slate-400 mt-1.5">
           Sign in to your SportNews Admin Panel
         </p>
-      </div>
-
-      {/* Demo Credentials Info */}
-      <div className="mb-6 p-3.5 rounded-2xl bg-indigo-950/20 border border-indigo-500/10 text-indigo-300 text-xs">
-        <div className="flex items-start gap-2">
-          <Sparkles className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-          <div>
-            <p className="font-semibold text-indigo-200">Demo Account Credentials:</p>
-            <p className="mt-1">Email: <span className="font-mono text-slate-100 select-all">alex.mercer@sportnews.com</span></p>
-            <p>Password: <span className="font-mono text-slate-100 select-all">admin123</span></p>
-          </div>
-        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 relative z-10">

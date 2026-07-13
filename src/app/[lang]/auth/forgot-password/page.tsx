@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useParams } from "next/navigation";
@@ -7,8 +7,7 @@ import Link from "next/link";
 import { ShieldAlert, ArrowLeft, Mail } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { ForgotFormValues, forgotSchema } from "@/validation/auth.validation";
-
-
+import { useSendOtpMutation } from "@/redux/features/auth/auth.api";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -16,7 +15,7 @@ export default function ForgotPasswordPage() {
   const { toast } = useToast();
   const lang = params?.lang || "en";
 
-  const [loading, setLoading] = useState(false);
+  const [sendOtp, { isLoading: loading }] = useSendOtpMutation();
 
   const { register, handleSubmit, formState: { errors } } = useForm<ForgotFormValues>({
     resolver: zodResolver(forgotSchema),
@@ -25,14 +24,20 @@ export default function ForgotPasswordPage() {
     },
   });
 
-  const onSubmit = (data: ForgotFormValues) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      toast("OTP code sent to your email!", "success");
+  const onSubmit = async (data: ForgotFormValues) => {
+    try {
+      const response = await sendOtp({
+        email: data.email,
+        purpose: "reset_password",
+      }).unwrap();
+
+      toast(response.message || "OTP code sent to your email!", "success");
       // Redirect to verification screen, passing email as query parameter
       router.push(`/${lang}/auth/verify-otp?email=${encodeURIComponent(data.email)}`);
-    }, 1500);
+    } catch (error: any) {
+      const errorMsg = error?.data?.detail || error?.data?.message || "Failed to send OTP. Please try again.";
+      toast(errorMsg, "error");
+    }
   };
 
   return (

@@ -5,6 +5,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ShieldAlert, KeyRound } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { useVerifyOtpMutation, useSendOtpMutation } from "@/redux/features/auth/auth.api";
 
 export default function VerifyOtpPage() {
   const router = useRouter();
@@ -12,10 +13,11 @@ export default function VerifyOtpPage() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const lang = params?.lang || "en";
-  const email = searchParams.get("email") || "your email";
+  const email = searchParams.get("email") || "";
 
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
-  const [loading, setLoading] = useState(false);
+  const [verifyOtp, { isLoading: loading }] = useVerifyOtpMutation();
+  const [sendOtp] = useSendOtpMutation();
   const [timeLeft, setTimeLeft] = useState(59);
   const [error, setError] = useState("");
 
@@ -75,13 +77,19 @@ export default function VerifyOtpPage() {
     }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (timeLeft > 0) return;
-    setTimeLeft(59);
-    toast("A new 6-digit OTP code has been sent!", "info");
+    try {
+      await sendOtp({ email, purpose: "reset_password" }).unwrap();
+      setTimeLeft(59);
+      toast("A new 6-digit OTP code has been sent!", "info");
+    } catch (err: any) {
+      const errorMsg = err?.data?.detail || err?.data?.message || "Failed to resend OTP. Please try again.";
+      toast(errorMsg, "error");
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const code = otp.join("");
     if (code.length < 6) {
@@ -89,13 +97,20 @@ export default function VerifyOtpPage() {
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      // Let any 6 digits work for ease of demo
-      toast("OTP code verified successfully!", "success");
-      router.push(`/${lang}/auth/reset-password`);
-    }, 1500);
+    try {
+      const response = await verifyOtp({
+        email,
+        otp: code,
+        purpose: "reset_password"
+      }).unwrap();
+
+      toast(response.message || "OTP code verified successfully!", "success");
+      router.push(`/${lang}/auth/reset-password?email=${encodeURIComponent(email)}`);
+    } catch (err: any) {
+      const errorMsg = err?.data?.detail || err?.data?.message || "Failed to verify OTP. Please try again.";
+      setError(errorMsg);
+      toast(errorMsg, "error");
+    }
   };
 
   return (

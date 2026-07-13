@@ -2,15 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Inbox, Settings, LogOut, Search, Bell, ChevronRight, User, Menu, X, Sparkles, BookOpen, CheckCircle2, AlertCircle, Trophy, Newspaper, GitPullRequestCreate, Users } from "lucide-react";
+import { LayoutDashboard, Inbox, Settings, LogOut, Bell, Menu, X, Sparkles, BookOpen, CheckCircle2, AlertCircle, Trophy, Newspaper, GitPullRequestCreate, Users } from "lucide-react";
 import { ToastProvider, useToast } from "@/components/ui/toast"
+import { removeToken } from "@/lib/auth";
 
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <ToastProvider>
       <AdminLayoutContent>{children}</AdminLayoutContent>
@@ -82,11 +79,16 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     toast("Notification dismissed");
   };
 
-  const handleLogout = () => {
-    toast("Successfully logged out", "success");
-    setTimeout(() => {
-      router.push(`/${lang}/auth/signin`);
-    }, 800);
+  const handleLogout = async () => {
+    try {
+      await removeToken();
+      toast("Successfully logged out", "success");
+      setTimeout(() => {
+        router.push(`/${lang}/auth/sign-in`);
+      }, 800);
+    } catch (error) {
+      toast("Failed to log out", "error");
+    }
   };
 
   // Nav items configuration

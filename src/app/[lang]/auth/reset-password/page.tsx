@@ -2,22 +2,23 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, ShieldAlert, KeyRound } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { resetPasswordSchema, ResetPasswordValues } from "@/validation/auth.validation";
-
-
+import { useResetPasswordMutation } from "@/redux/features/auth/auth.api";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const lang = params?.lang || "en";
+  const email = searchParams.get("email") || "";
 
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [resetPassword, { isLoading: loading }] = useResetPasswordMutation();
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
@@ -49,13 +50,19 @@ export default function ResetPasswordPage() {
 
   const strength = getPasswordStrength(passwordVal);
 
-  const onSubmit = (data: ResetPasswordValues) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      toast("Password reset successfully! Please sign in.", "success");
+  const onSubmit = async (data: ResetPasswordValues) => {
+    try {
+      const response = await resetPassword({
+        email,
+        new_password: data.password,
+      }).unwrap();
+
+      toast(response.message || "Password reset successfully! Please sign in.", "success");
       router.push(`/${lang}/auth/sign-in`);
-    }, 1500);
+    } catch (err: any) {
+      const errorMsg = err?.data?.detail || err?.data?.message || "Failed to reset password. Please try again.";
+      toast(errorMsg, "error");
+    }
   };
 
   return (

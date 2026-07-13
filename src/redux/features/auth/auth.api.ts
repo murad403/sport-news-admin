@@ -1,38 +1,48 @@
 import baseApi from "@/redux/api/api";
+import {
+  SignInRequest,
+  SignInResponse,
+  SendOtpRequest,
+  SendOtpResponse,
+  VerifyOtpRequest,
+  VerifyOtpResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
+} from "./auth.type";
 
 const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        signIn: builder.mutation({
+        signIn: builder.mutation<SignInResponse, SignInRequest>({
             query: (data) => {
                 return {
-                    url: "/auth/login",
+                    url: "/auth/signin/",
                     method: "POST",
                     body: data
                 }
             }
         }),
-        forgotPassword: builder.mutation({
+        sendOtp: builder.mutation<SendOtpResponse, SendOtpRequest>({
             query: (data) => {
                 return {
-                    url: "/auth/forget-password",
+                    url: "/auth/send-otp/",
                     method: "POST",
                     body: data
                 } 
             }
         }),
-        verifyOtp: builder.mutation({
+        verifyOtp: builder.mutation<VerifyOtpResponse, VerifyOtpRequest>({
             query: (data) => {
                 return {
-                    url: "/auth/otp-verify",
+                    url: "/auth/verify-otp/",
                     method: "POST",
                     body: data
                 }
             }
         }),
-        resetPassword: builder.mutation({
+        resetPassword: builder.mutation<ResetPasswordResponse, ResetPasswordRequest>({
             query: (data) => {
                 return {
-                    url: '/auth/reset-password',
+                    url: '/auth/reset-password/',
                     method: "POST",
                     body: data
                 }
@@ -43,7 +53,7 @@ const authApi = baseApi.injectEndpoints({
 
 export const {
     useSignInMutation,
-    useForgotPasswordMutation,
+    useSendOtpMutation,
     useVerifyOtpMutation,
     useResetPasswordMutation
 } = authApi;
