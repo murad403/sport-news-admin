@@ -42,9 +42,9 @@ export default function SportsCategoriesPage() {
   const totalCategories = data?.count || 0;
 
   // Mutation hooks
-  const [addCategory] = useAddCategoryMutation();
-  const [updateCategory] = useUpdateCategoryMutation();
-  const [deleteCategory] = useDeleteCategoryMutation();
+  const [addCategory, { isLoading: isAdding }] = useAddCategoryMutation();
+  const [updateCategory, { isLoading: isUpdating }] = useUpdateCategoryMutation();
+  const [deleteCategory, { isLoading: isDeleting }] = useDeleteCategoryMutation();
 
   // Modal control states
   const [selectedCat, setSelectedCat] = useState<Category | null>(null);
@@ -226,7 +226,7 @@ export default function SportsCategoriesPage() {
         <CustomPagination
           count={totalCategories}
           page={page}
-          pageSize={10}
+          pageSize={20}
           onChange={(newPage) => setPage(newPage)}
         />
       </div>
@@ -236,6 +236,7 @@ export default function SportsCategoriesPage() {
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
         onConfirm={handleAddCategory}
+        isLoading={isAdding}
       />
 
       {/* Edit Modal */}
@@ -248,6 +249,7 @@ export default function SportsCategoriesPage() {
           }}
           onConfirm={handleEditCategory}
           currentName={selectedCat.name}
+          isLoading={isUpdating}
         />
       )}
 
@@ -261,6 +263,7 @@ export default function SportsCategoriesPage() {
           }}
           onConfirm={handleDeleteCategory}
           categoryName={selectedCat.name}
+          isLoading={isDeleting}
         />
       )}
     </div>
