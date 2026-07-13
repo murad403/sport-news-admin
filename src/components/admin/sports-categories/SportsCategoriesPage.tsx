@@ -1,114 +1,94 @@
 "use client";
 
-import React, { useState } from "react";
-import { Search, Plus, Edit2, Trash2, Tag, BookOpen, BarChart3, AlertCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, Plus, Edit2, Trash2, Tag, AlertCircle } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import AddCategoryModal from "./AddCategoryModal";
 import EditCategoryModal from "./EditCategoryModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
-
-interface SportsCategory {
-  id: string;
-  name: string;
-  slug: string;
-  articleCount: number;
-  createdAt: string;
-}
+import CustomPagination from "@/components/shared/CustomPagination";
+import { Category } from "@/redux/features/categories/categories.type";
+import {
+  useGetCategoriesQuery,
+  useAddCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+} from "@/redux/features/categories/categories.api";
 
 export default function SportsCategoriesPage() {
   const { toast } = useToast();
 
-  // Local state for categories list
-  const [categories, setCategories] = useState<SportsCategory[]>([
-    { id: "cat-1", name: "Soccer", slug: "soccer", articleCount: 520, createdAt: "Jun 12, 2025" },
-    { id: "cat-2", name: "Tennis", slug: "tennis", articleCount: 210, createdAt: "Jul 02, 2025" },
-    { id: "cat-3", name: "Basketball", slug: "basketball", articleCount: 340, createdAt: "Aug 15, 2025" },
-    { id: "cat-4", name: "F1", slug: "f1", articleCount: 178, createdAt: "Oct 05, 2025" },
-  ]);
-
-  // Search filter state
+  // Search filter and pagination state
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1);
+
+  // Debounce search query
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setPage(1);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  // Fetch categories using RTK Query
+  const { data, isLoading } = useGetCategoriesQuery({
+    page,
+    search: debouncedSearch,
+  });
+
+  const categories = data?.results || [];
+  const totalCategories = data?.count || 0;
+
+  // Mutation hooks
+  const [addCategory] = useAddCategoryMutation();
+  const [updateCategory] = useUpdateCategoryMutation();
+  const [deleteCategory] = useDeleteCategoryMutation();
 
   // Modal control states
-  const [selectedCat, setSelectedCat] = useState<SportsCategory | null>(null);
+  const [selectedCat, setSelectedCat] = useState<Category | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   // CRUD handlers
-  const handleAddCategory = (name: string) => {
-    // Check duplication
-    const duplicate = categories.some((c) => c.name.toLowerCase() === name.toLowerCase());
-    if (duplicate) {
-      toast("Category name already exists!", "error");
-      return;
+  const handleAddCategory = async (name: string) => {
+    try {
+      await addCategory({ name }).unwrap();
+      toast(`Category "${name}" created successfully!`, "success");
+      setIsAddOpen(false);
+    } catch (err: any) {
+      const errorMsg = err?.data?.detail || err?.data?.message || "Failed to create category.";
+      toast(errorMsg, "error");
     }
-
-    const newCategory: SportsCategory = {
-      id: `cat-${Date.now()}`,
-      name,
-      slug: name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
-      articleCount: 0,
-      createdAt: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "2-digit",
-        year: "numeric",
-      }),
-    };
-
-    setCategories((prev) => [...prev, newCategory]);
-    toast(`Category "${name}" created successfully!`, "success");
-    setIsAddOpen(false);
   };
 
-  const handleEditCategory = (newName: string) => {
+  const handleEditCategory = async (newName: string) => {
     if (!selectedCat) return;
-
-    // Check duplication excluding current editing category
-    const duplicate = categories.some(
-      (c) => c.id !== selectedCat.id && c.name.toLowerCase() === newName.toLowerCase()
-    );
-    if (duplicate) {
-      toast("Category name already exists!", "error");
-      return;
+    try {
+      await updateCategory({ id: selectedCat.slug, name: newName }).unwrap();
+      toast(`Category updated to "${newName}" successfully!`, "success");
+      setIsEditOpen(false);
+      setSelectedCat(null);
+    } catch (err: any) {
+      const errorMsg = err?.data?.detail || err?.data?.message || "Failed to update category.";
+      toast(errorMsg, "error");
     }
-
-    setCategories((prev) =>
-      prev.map((c) =>
-        c.id === selectedCat.id
-          ? {
-              ...c,
-              name: newName,
-              slug: newName.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
-            }
-          : c
-      )
-    );
-
-    toast(`Category updated to "${newName}" successfully!`, "success");
-    setIsEditOpen(false);
-    setSelectedCat(null);
   };
 
-  const handleDeleteCategory = () => {
+  const handleDeleteCategory = async () => {
     if (!selectedCat) return;
-
-    setCategories((prev) => prev.filter((c) => c.id !== selectedCat.id));
-    toast(`Category "${selectedCat.name}" deleted successfully!`, "success");
-    setIsDeleteOpen(false);
-    setSelectedCat(null);
+    try {
+      await deleteCategory(selectedCat.slug).unwrap();
+      toast(`Category "${selectedCat.name}" deleted successfully!`, "success");
+      setIsDeleteOpen(false);
+      setSelectedCat(null);
+    } catch (err: any) {
+      const errorMsg = err?.data?.detail || err?.data?.message || "Failed to delete category.";
+      toast(errorMsg, "error");
+    }
   };
-
-  // Filter categories based on search
-  const filteredCategories = categories.filter((c) =>
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.slug.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Statistics summaries
-  const totalCategories = categories.length;
-  const totalArticles = categories.reduce((acc, c) => acc + c.articleCount, 0);
-  const topCategory = [...categories].sort((a, b) => b.articleCount - a.articleCount)[0];
 
   return (
     <div className="space-y-6">
@@ -130,7 +110,7 @@ export default function SportsCategoriesPage() {
       </div>
 
       {/* Categories Stats Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="max-w-xs">
         {/* Total Categories Card */}
         <div className="p-5 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-lg flex items-center justify-between">
           <div>
@@ -139,30 +119,6 @@ export default function SportsCategoriesPage() {
           </div>
           <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-300">
             <Tag className="w-4.5 h-4.5" />
-          </div>
-        </div>
-
-        {/* Total Categorized Articles Card */}
-        <div className="p-5 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-lg flex items-center justify-between">
-          <div>
-            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Categorized Articles</span>
-            <p className="text-2xl font-bold text-white mt-1">{totalArticles}</p>
-          </div>
-          <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-300">
-            <BookOpen className="w-4.5 h-4.5" />
-          </div>
-        </div>
-
-        {/* Highest Share Card */}
-        <div className="p-5 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-lg flex items-center justify-between">
-          <div>
-            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Dominant Category</span>
-            <p className="text-sm font-bold text-white mt-1.5 truncate max-w-[160px]">
-              {topCategory ? `${topCategory.name} (${topCategory.articleCount})` : "None"}
-            </p>
-          </div>
-          <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-300">
-            <BarChart3 className="w-4.5 h-4.5" />
           </div>
         </div>
       </div>
@@ -176,7 +132,7 @@ export default function SportsCategoriesPage() {
             placeholder="Search categories or slugs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-950/60 border border-slate-850 hover:border-slate-800 focus:border-indigo-500/50 rounded-xl text-xs text-slate-100 placeholder-slate-500 outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-950/60 border border-slate-850 hover:border-slate-800 focus:border-indigo-500/50 rounded-xl text-xs text-slate-100 placeholder-slate-550 outline-none transition-all"
           />
         </div>
       </div>
@@ -187,17 +143,28 @@ export default function SportsCategoriesPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-800/40 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                <th className="pb-3 px-2">Category</th>
-                <th className="pb-3 px-2">Slug Link</th>
-                <th className="pb-3 px-2">Total Articles</th>
-                <th className="pb-3 px-2">Created Date</th>
+                <th className="pb-3 px-2">Name</th>
+                <th className="pb-3 px-2">Slug</th>
+                <th className="pb-3 px-2">News Count</th>
                 <th className="pb-3 px-2 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/20 text-xs">
-              {filteredCategories.length === 0 ? (
+              {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-500">
+                  <td colSpan={4} className="py-12 text-center text-slate-500">
+                    <div className="flex flex-col items-center gap-2">
+                      <svg className="animate-spin h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <p className="text-[10px] text-slate-500 mt-1">Loading categories...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : categories.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center gap-2">
                       <AlertCircle className="w-8 h-8 text-slate-600" />
                       <p className="font-semibold text-slate-400">No categories found</p>
@@ -206,9 +173,8 @@ export default function SportsCategoriesPage() {
                   </td>
                 </tr>
               ) : (
-                filteredCategories.map((cat) => (
+                categories.map((cat) => (
                   <tr key={cat.id} className="hover:bg-slate-900/20 transition-colors group animate-in fade-in duration-200">
-                    {/* Category Name */}
                     <td className="py-4 px-2">
                       <div className="flex items-center gap-2.5">
                         <div className="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-[10px] text-indigo-300 uppercase">
@@ -217,25 +183,14 @@ export default function SportsCategoriesPage() {
                         <span className="font-semibold text-slate-200">{cat.name}</span>
                       </div>
                     </td>
-
-                    {/* Slug */}
                     <td className="py-4 px-2">
                       <span className="text-slate-400 font-mono text-[11px] bg-slate-950 px-2 py-1 rounded-lg border border-slate-900">
-                        /{cat.slug}
+                        {cat.slug}
                       </span>
                     </td>
-
-                    {/* Article Count */}
                     <td className="py-4 px-2 font-semibold text-slate-300">
-                      {cat.articleCount}
+                      {cat.news_count ?? 0}
                     </td>
-
-                    {/* Created Date */}
-                    <td className="py-4 px-2 text-slate-500">
-                      {cat.createdAt}
-                    </td>
-
-                    {/* Actions */}
                     <td className="py-4 px-2 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
@@ -266,6 +221,14 @@ export default function SportsCategoriesPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Custom Pagination */}
+        <CustomPagination
+          count={totalCategories}
+          page={page}
+          pageSize={10}
+          onChange={(newPage) => setPage(newPage)}
+        />
       </div>
 
       {/* Add Modal */}

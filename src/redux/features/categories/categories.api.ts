@@ -1,27 +1,35 @@
 import baseApi from "@/redux/api/api";
-
+import {
+  Category,
+  GetCategoriesResponse,
+  GetCategoriesQueryArg,
+  AddCategoryRequest,
+  AddCategoryResponse,
+  UpdateCategoryResponse,
+} from "./categories.type";
 
 const categoriesApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getCategories: builder.query({
-            query: () => {
+        getCategories: builder.query<GetCategoriesResponse, GetCategoriesQueryArg>({
+            query: (params) => {
                 return {
                     url: "/news/categories/",
-                    method: "GET"
+                    method: "GET",
+                    params: params
                 }
             },
             providesTags: ["Categories"]
         }),
-        getCategory: builder.query({
-            query: (slug) => {
+        getCategory: builder.query<Category, string>({
+            query: (id) => {
                 return {
-                    url: `/news/categories/${slug}/`,
+                    url: `/news/categories/${id}/`,
                     method: "GET"
                 }
             },
             providesTags: ["Categories"]
         }),
-        addCategory: builder.mutation({
+        addCategory: builder.mutation<AddCategoryResponse, AddCategoryRequest>({
             query: (data) => {
                 return {
                     url: "/news/categories/",
@@ -31,20 +39,20 @@ const categoriesApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ["Categories"]
         }),
-        updateCategory: builder.mutation({
-            query: ({slug, data}) => {
+        updateCategory: builder.mutation<UpdateCategoryResponse, { id: string; name: string }>({
+            query: ({ id, name }) => {
                 return {
-                    url: `/news/categories/${slug}/`,
+                    url: `/news/categories/${id}/`,
                     method: "PATCH",
-                    body: data
+                    body: { name }
                 }
             },
             invalidatesTags: ["Categories"]
         }),
-        deleteCategory: builder.mutation({
-            query: (slug) => {
+        deleteCategory: builder.mutation<void, string>({
+            query: (id) => {
                 return {
-                    url: `/news/categories/${slug}/`,
+                    url: `/news/categories/${id}/`,
                     method: "DELETE",
                 }
             },

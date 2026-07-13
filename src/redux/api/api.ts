@@ -10,6 +10,7 @@ const baseQuery = fetchBaseQuery({
         if (access) {
             headers.set('Authorization', `Bearer ${access}`);
         }
+        headers.set('ngrok-skip-browser-warning', 'true');
         return headers;
     }
 })
