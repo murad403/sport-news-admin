@@ -8,7 +8,11 @@ import {
   VerifyOtpResponse,
   ResetPasswordRequest,
   ResetPasswordResponse,
+  ChangePasswordRequest,
+  ChangePasswordResponse,
+  User,
 } from "./auth.type";
+
 
 const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -47,7 +51,37 @@ const authApi = baseApi.injectEndpoints({
                     body: data
                 }
             }
-        })
+        }),
+        changePassword: builder.mutation<ChangePasswordResponse, ChangePasswordRequest>({
+            query: (data) => {
+                return {
+                    url: '/auth/change-password/',
+                    method: "POST",
+                    body: data
+                }
+            }
+        }),
+
+        // profile**************************************
+        getProfile: builder.query<User, void>({
+            query: () => {
+                return {
+                    url: '/auth/profile/',
+                    method: "GET"
+                }
+            },
+            providesTags: ["Profile"]
+        }),
+        updateProfile: builder.mutation<User, FormData>({
+            query: (data) => {
+                return {
+                    url: '/auth/profile/',
+                    method: "PATCH",
+                    body: data
+                }
+            },
+            invalidatesTags: ["Profile"]
+        }),
     })
 })
 
@@ -55,5 +89,8 @@ export const {
     useSignInMutation,
     useSendOtpMutation,
     useVerifyOtpMutation,
-    useResetPasswordMutation
+    useResetPasswordMutation,
+    useChangePasswordMutation,
+    useGetProfileQuery,
+    useUpdateProfileMutation
 } = authApi;

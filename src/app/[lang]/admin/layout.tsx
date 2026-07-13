@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LayoutDashboard, Inbox, Settings, LogOut, Bell, Menu, X, Sparkles, BookOpen, CheckCircle2, AlertCircle, Trophy, Newspaper, GitPullRequestCreate, Users } from "lucide-react";
 import { ToastProvider, useToast } from "@/components/ui/toast"
 import { removeToken } from "@/lib/auth";
+import { useGetProfileQuery } from "@/redux/features/auth/auth.api";
 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -21,6 +22,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const params = useParams();
   const { toast } = useToast();
   const lang = params?.lang || "en";
+  const { data: profile } = useGetProfileQuery();
 
 
   // Sidebar states
@@ -206,12 +208,16 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           {!isCollapsed ? (
             <div className="flex items-center justify-between p-2 rounded-xl bg-slate-800/30 border border-slate-800/30">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center font-bold text-indigo-300 shrink-0 shadow-inner">
-                  AM
+                <div className="w-9 h-9 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center font-bold text-indigo-300 shrink-0 shadow-inner overflow-hidden">
+                  {profile?.avatar ? (
+                    <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
+                  ) : (
+                    profile?.name?.substring(0, 2).toUpperCase() || "AM"
+                  )}
                 </div>
                 <div className="min-w-0 leading-tight">
-                  <p className="text-xs font-semibold text-slate-200 truncate">Alex Mercer</p>
-                  <p className="text-[10px] text-slate-500 truncate">Super Admin</p>
+                  <p className="text-xs font-semibold text-slate-200 truncate">{profile?.name || "Alex Mercer"}</p>
+                  <p className="text-[10px] text-slate-500 truncate">{profile?.role || "Super Admin"}</p>
                 </div>
               </div>
               <button
@@ -278,12 +284,16 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
             <div className="pt-4 border-t border-slate-800/60 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center font-bold text-indigo-300 shadow-inner">
-                  AM
+                <div className="w-9 h-9 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center font-bold text-indigo-300 shadow-inner overflow-hidden">
+                  {profile?.avatar ? (
+                    <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
+                  ) : (
+                    profile?.name?.substring(0, 2).toUpperCase() || "AM"
+                  )}
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-200">Alex Mercer</p>
-                  <p className="text-[10px] text-slate-500">Super Admin</p>
+                  <p className="text-xs font-semibold text-slate-200">{profile?.name || "Alex Mercer"}</p>
+                  <p className="text-[10px] text-slate-500">{profile?.role || "Super Admin"}</p>
                 </div>
               </div>
               <button
@@ -414,9 +424,13 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                   setShowProfileDropdown(!showProfileDropdown);
                   setShowNotifications(false);
                 }}
-                className="w-8 h-8 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center font-bold text-xs text-indigo-300 hover:ring-2 hover:ring-indigo-500/30 transition-all"
+                className="w-8 h-8 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center font-bold text-xs text-indigo-300 hover:ring-2 hover:ring-indigo-500/30 transition-all overflow-hidden"
               >
-                AM
+                {profile?.avatar ? (
+                  <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
+                ) : (
+                  profile?.name?.substring(0, 2).toUpperCase() || "AM"
+                )}
               </button>
 
               {showProfileDropdown && (
@@ -424,8 +438,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                   <div className="fixed inset-0 z-40" onClick={() => setShowProfileDropdown(false)} />
                   <div className="absolute right-0 mt-3 w-56 bg-slate-900 border border-slate-800/80 shadow-2xl rounded-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="px-3 py-2.5 border-b border-slate-800/60 mb-1.5">
-                      <p className="text-xs font-semibold text-slate-200">Alex Mercer</p>
-                      <p className="text-[10px] text-slate-500">alex.mercer@sportnews.com</p>
+                      <p className="text-xs font-semibold text-slate-200">{profile?.name || "Alex Mercer"}</p>
+                      <p className="text-[10px] text-slate-500">{profile?.email || "alex.mercer@sportnews.com"}</p>
                     </div>
                     <div className="space-y-0.5">
                       <Link

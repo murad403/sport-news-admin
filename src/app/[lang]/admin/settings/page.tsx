@@ -1,11 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { User, KeyRound, ShieldAlert, Upload, Sparkles, Check } from "lucide-react";
+import { User, KeyRound, ShieldAlert, Upload } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import {
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+  useChangePasswordMutation,
+} from "@/redux/features/auth/auth.api";
 
 // Schema for Change Password Form
 const passwordChangeSchema = z
@@ -25,21 +30,27 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"profile" | "password">("profile");
 
+  // Profile RTK Query Hooks
+  const { data: profile, isLoading: isProfileLoading } = useGetProfileQuery();
+  const [updateProfile, { isLoading: profileSaving }] = useUpdateProfileMutation();
+  const [changePassword] = useChangePasswordMutation();
+
   // Profile Info States
-  const [name, setName] = useState("Alex Mercer");
-  const [email, setEmail] = useState("alex.mercer@sportnews.com");
-  const [specializations, setSpecializations] = useState<string[]>(["Soccer", "F1"]);
-  const [profileSaving, setProfileSaving] = useState(false);
-  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (profile) {
+      setName(profile.name || "");
+      setAvatarPreview(profile.avatar || null);
+    }
+  }, [profile]);
 
   // Form setup for Password
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm<PasswordFormValues>({
+  const { register, handleSubmit, watch, reset, formState: { errors },} = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordChangeSchema),
     defaultValues: {
       currentPassword: "",
@@ -70,36 +81,76 @@ export default function SettingsPage() {
 
   const strength = getPasswordStrength(newPasswordVal);
 
-  const handleProfileSave = (e: React.FormEvent) => {
+  const handleProfileSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim()) {
-      toast("Name and email are required fields", "error");
+    if (!name.trim()) {
+      toast("Name is required", "error");
       return;
     }
 
-    setProfileSaving(true);
-    setTimeout(() => {
-      setProfileSaving(false);
-      toast("Profile information saved successfully", "success");
-    }, 1200);
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      if (avatarFile) {
+        formData.append("avatar", avatarFile);
+      }
+      
+      await updateProfile(formData).unwrap();
+      toast("Profile details updated successfully!", "success");
+    } catch (err: any) {
+      const errorMsg = err?.data?.detail || err?.data?.message || "Failed to save profile. Please try again.";
+      toast(errorMsg, "error");
+    }
   };
 
-  const handleAvatarUpload = () => {
-    setAvatarLoading(true);
-    setTimeout(() => {
-      setAvatarLoading(false);
-      toast("Profile picture uploaded successfully!", "success");
-    }, 1500);
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
   };
 
-  const onPasswordSubmit = (data: PasswordFormValues) => {
-    setProfileSaving(true);
-    setTimeout(() => {
-      setProfileSaving(false);
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const onPasswordSubmit = async (data: PasswordFormValues) => {
+    try {
+      await changePassword({
+        old_password: data.currentPassword,
+        new_password: data.newPassword,
+      }).unwrap();
       toast("Password changed successfully", "success");
       reset(); // Clear form
-    }, 1500);
+    } catch (err: any) {
+      const errorData = err?.data;
+      let errorMsg = "Failed to change password.";
+      
+      if (errorData && typeof errorData === "object") {
+        if (Array.isArray(errorData.old_password)) {
+          errorMsg = errorData.old_password[0];
+        } else if (errorData.detail) {
+          errorMsg = errorData.detail;
+        } else if (errorData.message) {
+          errorMsg = errorData.message;
+        }
+      }
+      
+      toast(errorMsg, "error");
+    }
   };
+
+  if (isProfileLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <svg className="animate-spin h-8 w-8 text-indigo-500" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        </svg>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -151,24 +202,27 @@ export default function SettingsPage() {
               {/* Avatar Uploader Section */}
               <div className="flex flex-col sm:flex-row items-center gap-5 pb-5 border-b border-slate-800/20">
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-lg text-indigo-300 shadow-inner">
-                    {avatarLoading ? (
-                      <svg className="animate-spin h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
+                  <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-lg text-indigo-300 shadow-inner overflow-hidden">
+                    {avatarPreview ? (
+                      <img src={avatarPreview} alt="Avatar Preview" className="w-full h-full object-cover" />
                     ) : (
-                      "AM"
+                      name?.substring(0, 2).toUpperCase() || "AM"
                     )}
                   </div>
                 </div>
                 <div className="text-center sm:text-left leading-relaxed">
                   <p className="text-xs font-semibold text-slate-200">Avatar Photograph</p>
                   <p className="text-[10px] text-slate-500 mt-0.5">Supports PNG, JPG, or GIF up to 2MB.</p>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleAvatarChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
                   <button
                     type="button"
-                    onClick={handleAvatarUpload}
-                    disabled={avatarLoading}
+                    onClick={handleUploadClick}
                     className="mt-2.5 px-3 py-1.5 bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-lg text-[10px] font-semibold text-slate-300 hover:text-slate-200 transition-all inline-flex items-center gap-1.5"
                   >
                     <Upload className="w-3 h-3" />
@@ -200,9 +254,9 @@ export default function SettingsPage() {
                     </label>
                     <input
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-100 placeholder-slate-550 outline-none transition-all"
+                      value={profile?.email || ""}
+                      disabled
+                      className="w-full px-4 py-2.5 bg-slate-950/30 border border-slate-850/60 rounded-xl text-xs text-slate-500 outline-none cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -215,43 +269,10 @@ export default function SettingsPage() {
                     </label>
                     <input
                       type="text"
-                      value="Super Admin"
+                      value={profile?.role || ""}
                       disabled
                       className="w-full px-4 py-2.5 bg-slate-950/30 border border-slate-850/60 rounded-xl text-xs text-slate-500 outline-none cursor-not-allowed"
                     />
-                  </div>
-
-                  {/* Specialization Categories tags */}
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                      Assigned Categories
-                    </label>
-                    <div className="flex flex-wrap gap-1.5 pt-1.5">
-                      {["Soccer", "Tennis", "Basketball", "F1"].map((sport) => {
-                        const isSelected = specializations.includes(sport);
-                        return (
-                          <button
-                            key={sport}
-                            type="button"
-                            onClick={() => {
-                              if (isSelected) {
-                                setSpecializations(specializations.filter((s) => s !== sport));
-                              } else {
-                                setSpecializations([...specializations, sport]);
-                              }
-                            }}
-                            className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold border transition-all flex items-center gap-1 ${
-                              isSelected
-                                ? "bg-indigo-950/40 border-indigo-550 text-indigo-300"
-                                : "bg-slate-950 border-slate-800 text-slate-400"
-                            }`}
-                          >
-                            {isSelected && <Check className="w-3 h-3 text-indigo-400" />}
-                            {sport}
-                          </button>
-                        );
-                      })}
-                    </div>
                   </div>
                 </div>
 
