@@ -1,9 +1,8 @@
 "use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Search, Plus, Eye, Edit2, Trash2, Tag, ArrowUpRight, TrendingUp, AlertCircle, Eye as EyeIcon, Globe, Heart, ShieldAlert, Star } from "lucide-react";
+import { Search, Plus, Eye, Edit2, Trash2, ArrowUpRight, AlertCircle, Eye as EyeIcon, Star } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 interface Category {

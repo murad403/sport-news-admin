@@ -1,19 +1,14 @@
 "use client";
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { ShieldAlert, BookOpen, ArrowLeft, Mail } from "lucide-react";
+import { ShieldAlert, ArrowLeft, Mail } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { ForgotFormValues, forgotSchema } from "@/validation/auth.validation";
 
-const forgotSchema = z.object({
-  email: z.string().email("Enter a valid email address"),
-});
 
-type ForgotFormValues = z.infer<typeof forgotSchema>;
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -23,11 +18,7 @@ export default function ForgotPasswordPage() {
 
   const [loading, setLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ForgotFormValues>({
+  const { register, handleSubmit, formState: { errors } } = useForm<ForgotFormValues>({
     resolver: zodResolver(forgotSchema),
     defaultValues: {
       email: "",
@@ -76,11 +67,10 @@ export default function ForgotPasswordPage() {
             type="email"
             placeholder="name@company.com"
             disabled={loading}
-            className={`w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all ${
-              errors.email
+            className={`w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all ${errors.email
                 ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
                 : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
-            }`}
+              }`}
             {...register("email")}
           />
           {errors.email && (

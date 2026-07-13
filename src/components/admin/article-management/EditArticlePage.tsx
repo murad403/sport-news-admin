@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -35,14 +34,7 @@ export default function EditArticlePage() {
   const lang = params?.lang || "en";
   const articleId = searchParams.get("id");
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<ArticleFormValues>({
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<ArticleFormValues>({
     resolver: zodResolver(articleSchema) as any,
     defaultValues: {
       title: "",
@@ -178,9 +170,8 @@ export default function EditArticlePage() {
             <input
               type="text"
               {...register("title")}
-              className={`w-full px-4 py-3 bg-slate-955/50 focus:bg-slate-950 border ${
-                errors.title ? "border-rose-500/50" : "border-slate-800"
-              } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all`}
+              className={`w-full px-4 py-3 bg-slate-955/50 focus:bg-slate-950 border ${errors.title ? "border-rose-500/50" : "border-slate-800"
+                } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all`}
             />
             {errors.title && (
               <p className="text-[10px] text-rose-450 font-semibold flex items-center gap-1 mt-1">
@@ -210,9 +201,8 @@ export default function EditArticlePage() {
             <textarea
               rows={12}
               {...register("content")}
-              className={`w-full p-4 bg-slate-955/50 focus:bg-slate-950 border ${
-                errors.content ? "border-rose-500/50" : "border-slate-800"
-              } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none resize-none no-scrollbar`}
+              className={`w-full p-4 bg-slate-955/50 focus:bg-slate-950 border ${errors.content ? "border-rose-500/50" : "border-slate-800"
+                } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none resize-none no-scrollbar`}
             />
             {errors.content && (
               <p className="text-[10px] text-rose-450 font-semibold flex items-center gap-1 mt-1">
@@ -231,9 +221,8 @@ export default function EditArticlePage() {
               <input
                 type="text"
                 {...register("imageUrl")}
-                className={`w-full px-4 py-2.5 bg-slate-955/50 focus:bg-slate-950 border ${
-                  errors.imageUrl ? "border-rose-500/50" : "border-slate-800"
-                } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all`}
+                className={`w-full px-4 py-2.5 bg-slate-955/50 focus:bg-slate-950 border ${errors.imageUrl ? "border-rose-500/50" : "border-slate-800"
+                  } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all`}
               />
               {errors.imageUrl && (
                 <p className="text-[10px] text-rose-450 font-semibold flex items-center gap-1 mt-1">
@@ -249,9 +238,8 @@ export default function EditArticlePage() {
               <input
                 type="text"
                 {...register("externalLink")}
-                className={`w-full px-4 py-2.5 bg-slate-955/50 focus:bg-slate-950 border ${
-                  errors.externalLink ? "border-rose-500/50" : "border-slate-800"
-                } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all`}
+                className={`w-full px-4 py-2.5 bg-slate-955/50 focus:bg-slate-950 border ${errors.externalLink ? "border-rose-500/50" : "border-slate-800"
+                  } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all`}
               />
               {errors.externalLink && (
                 <p className="text-[10px] text-rose-450 font-semibold flex items-center gap-1 mt-1">
@@ -284,11 +272,10 @@ export default function EditArticlePage() {
                       type="button"
                       key={cat}
                       onClick={() => handleCategoryToggle(cat)}
-                      className={`px-3 py-2 border rounded-xl text-left text-[11px] font-semibold transition-all ${
-                        isChecked
+                      className={`px-3 py-2 border rounded-xl text-left text-[11px] font-semibold transition-all ${isChecked
                           ? "bg-indigo-600/15 border-indigo-500/30 text-indigo-300"
                           : "bg-slate-955 border-slate-800 text-slate-400 hover:text-slate-200"
-                      }`}
+                        }`}
                     >
                       {cat}
                     </button>
@@ -362,9 +349,8 @@ export default function EditArticlePage() {
                 <input
                   type="text"
                   {...register("sourceUrl")}
-                  className={`w-full px-3 py-2 bg-slate-955 border ${
-                    errors.sourceUrl ? "border-rose-500/50" : "border-slate-800"
-                  } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all`}
+                  className={`w-full px-3 py-2 bg-slate-955 border ${errors.sourceUrl ? "border-rose-500/50" : "border-slate-800"
+                    } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all`}
                 />
                 {errors.sourceUrl && (
                   <p className="text-[10px] text-rose-455 font-semibold flex items-center gap-1 mt-1">

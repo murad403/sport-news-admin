@@ -1,25 +1,13 @@
 "use client";
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { useRouter, useParams } from "next/navigation";
-import Link from "next/link";
-import { Eye, EyeOff, ShieldAlert, KeyRound, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, ShieldAlert, KeyRound } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { resetPasswordSchema, ResetPasswordValues } from "@/validation/auth.validation";
 
-const resetPasswordSchema = z
-  .object({
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
 
-type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -31,12 +19,7 @@ export default function ResetPasswordPage() {
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<ResetPasswordValues>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       password: "",
@@ -49,7 +32,7 @@ export default function ResetPasswordPage() {
   const getPasswordStrength = (pass: string) => {
     if (!pass) return { label: "", score: 0, color: "bg-slate-800" };
     if (pass.length < 6) return { label: "Too Short", score: 1, color: "bg-rose-500" };
-    
+
     let score = 2;
     const hasNum = /\d/.test(pass);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
@@ -99,11 +82,10 @@ export default function ResetPasswordPage() {
               type={showPass ? "text" : "password"}
               placeholder="••••••••"
               disabled={loading}
-              className={`w-full pl-4 pr-10 py-3 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all ${
-                errors.password
+              className={`w-full pl-4 pr-10 py-3 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all ${errors.password
                   ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
                   : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
-              }`}
+                }`}
               {...register("password")}
             />
             <button
@@ -149,11 +131,10 @@ export default function ResetPasswordPage() {
               type={showConfirmPass ? "text" : "password"}
               placeholder="••••••••"
               disabled={loading}
-              className={`w-full pl-4 pr-10 py-3 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all ${
-                errors.confirmPassword
+              className={`w-full pl-4 pr-10 py-3 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all ${errors.confirmPassword
                   ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
                   : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
-              }`}
+                }`}
               {...register("confirmPassword")}
             />
             <button

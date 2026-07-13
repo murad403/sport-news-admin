@@ -8,14 +8,8 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, ShieldAlert, Sparkles, BookOpen } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { LoginFormValues, loginSchema } from "@/validation/auth.validation";
 
-const loginSchema = z.object({
-  email: z.string().email("Enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  rememberMe: z.boolean().optional(),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function SignInPage() {
   const router = useRouter();
@@ -26,11 +20,7 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -91,8 +81,8 @@ export default function SignInPage() {
             placeholder="name@company.com"
             disabled={loading}
             className={`w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all ${errors.email
-                ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
-                : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
+              ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
+              : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
               }`}
             {...register("email")}
           />
@@ -123,8 +113,8 @@ export default function SignInPage() {
               placeholder="••••••••"
               disabled={loading}
               className={`w-full pl-4 pr-10 py-3 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all ${errors.password
-                  ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
-                  : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
+                ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
+                : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
                 }`}
               {...register("password")}
             />
