@@ -1,9 +1,7 @@
 "use client";
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, ShieldAlert, BookOpen } from "lucide-react";
@@ -24,9 +22,8 @@ export default function SignInPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
-      rememberMe: false,
+      email: "mdmurad.dev2004@gmail.com",
+      password: "12345%%murad"
     },
   });
 
@@ -36,13 +33,8 @@ export default function SignInPage() {
         email: data.email,
         password: data.password,
       }).unwrap();
-
-      // Save tokens in cookies using saveToken helper function
       await saveToken(response.access, response.refresh);
-
       toast("Sign in successful!", "success");
-      
-      // Redirect to /en/admin dashboard page
       router.push(`/${lang}/admin`);
     } catch (error: any) {
       const errorMsg = error?.data?.detail || error?.data?.message || "Invalid credentials. Please try again.";
@@ -130,23 +122,6 @@ export default function SignInPage() {
               {errors.password.message}
             </span>
           )}
-        </div>
-
-        {/* Remember Me */}
-        <div className="flex items-center">
-          <input
-            id="remember-me"
-            type="checkbox"
-            disabled={loading}
-            className="w-4 h-4 rounded bg-slate-950 border border-slate-800 text-indigo-600 focus:ring-indigo-500/30 focus:ring-offset-slate-900 focus:ring-2"
-            {...register("rememberMe")}
-          />
-          <label
-            htmlFor="remember-me"
-            className="ml-2 text-xs text-slate-400 select-none cursor-pointer"
-          >
-            Keep me signed in for 30 days
-          </label>
         </div>
 
         {/* Submit Button */}

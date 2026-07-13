@@ -1,4 +1,3 @@
-import React from "react";
 import UserManagementPage from "@/components/admin/user-management/UserManagementPage";
 
 const UserManagementRoutePage = () => {
