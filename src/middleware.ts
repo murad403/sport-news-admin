@@ -32,7 +32,7 @@ export function middleware(request: NextRequest) {
 
   // Redirect legacy admin auth requests to their new location
   const legacyAuthMap: Record<string, string> = {
-    "/admin/signin": "/en/auth/signin",
+    "/admin/sign-in": "/en/auth/sign-in",
     "/admin/forgot-password": "/en/auth/forgot-password",
     "/admin/verify-otp": "/en/auth/verify-otp",
     "/admin/reset-password": "/en/auth/reset-password",
