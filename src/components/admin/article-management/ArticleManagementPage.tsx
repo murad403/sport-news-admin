@@ -5,7 +5,6 @@ import { useParams } from "next/navigation";
 import { Search, Plus, Eye, Edit2, Trash2, ArrowUpRight, AlertCircle, Star } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import CustomPagination from "@/components/shared/CustomPagination";
-import { Article } from "@/redux/features/articles/articles.type";
 import {
   useGetArticlesQuery,
   useDeleteArticleMutation,
@@ -59,17 +58,6 @@ export default function ArticleManagementPage() {
       } catch (err: any) {
         toast("Failed to delete article", "error");
       }
-    }
-  };
-
-  const toggleFeatured = async (art: Article) => {
-    try {
-      const formData = new FormData();
-      formData.append("is_featured", String(!art.is_featured));
-      await updateArticle({ id: art.id, data: formData }).unwrap();
-      toast("Featured status updated", "success");
-    } catch (err: any) {
-      toast("Failed to update featured status", "error");
     }
   };
 
@@ -127,7 +115,6 @@ export default function ArticleManagementPage() {
                 <th className="pb-3 px-2">Article</th>
                 <th className="pb-3 px-2">Classification</th>
                 <th className="pb-3 px-2">Author & Source</th>
-                <th className="pb-3 px-2">Sentiment</th>
                 <th className="pb-3 px-2">Views</th>
                 <th className="pb-3 px-2">Status</th>
                 <th className="pb-3 px-2 text-right">Actions</th>
@@ -160,8 +147,10 @@ export default function ArticleManagementPage() {
                 articles.map((art) => {
                   const statusStyles: Record<string, string> = {
                     published: "text-emerald-400 bg-emerald-500/5 border-emerald-500/10",
+                    approved: "text-emerald-400 bg-emerald-500/5 border-emerald-500/10",
                     draft: "text-slate-400 bg-slate-500/5 border-slate-500/10",
                     pending: "text-amber-400 bg-amber-500/5 border-amber-500/10",
+                    rejected: "text-rose-400 bg-rose-500/5 border-rose-500/10",
                   };
 
                   const sentimentStyles: Record<string, string> = {
@@ -236,12 +225,6 @@ export default function ArticleManagementPage() {
                             <ArrowUpRight className="w-2.5 h-2.5" />
                           </a>
                         )}
-                      </td>
-
-                      <td className="py-4 px-2">
-                        <span className={`px-2 py-0.5 rounded-md border text-[10px] font-semibold uppercase ${sentimentStyles[sentimentText] || sentimentStyles.neutral}`}>
-                          {sentimentText}
-                        </span>
                       </td>
 
                       <td className="py-4 px-2 text-slate-350 font-semibold font-mono">

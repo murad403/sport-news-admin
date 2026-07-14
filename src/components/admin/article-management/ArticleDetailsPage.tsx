@@ -1,6 +1,4 @@
 "use client";
-
-import React from "react";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Edit2, Star, Calendar, Eye, Globe, ExternalLink, Activity, Info } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
@@ -19,9 +17,9 @@ export default function ArticleDetailsPage() {
   const { data: article, isLoading } = useGetArticleDetailsQuery(articleSlug, {
     skip: !articleSlug,
   });
-  const [updateArticle] = useUpdateArticleMutation();
+  const [updateArticle, { isLoading: isUpdating }] = useUpdateArticleMutation();
 
-  const handleStatusChange = async (newStatus: "pending" | "published" | "draft") => {
+  const handleStatusChange = async (newStatus: "draft" | "pending" | "approved" | "rejected") => {
     if (!article) return;
     try {
       const formData = new FormData();
@@ -35,8 +33,12 @@ export default function ArticleDetailsPage() {
 
   if (isLoading) {
     return (
-      <div className="py-20 text-center text-slate-500">
-        <p className="font-semibold text-slate-400">Loading article details...</p>
+      <div className="py-24 flex flex-col items-center justify-center text-center">
+        <svg className="animate-spin h-8 w-8 text-indigo-500" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        </svg>
+        <p className="text-xs text-slate-400 font-medium mt-3">Loading article details...</p>
       </div>
     );
   }
@@ -56,6 +58,7 @@ export default function ArticleDetailsPage() {
   };
 
   const sentimentText = article.sentiment || "neutral";
+  const displayDate = article.pub_date || article.created_at;
 
   return (
     <div className="space-y-6">
@@ -95,6 +98,11 @@ export default function ArticleDetailsPage() {
             {article.categories.map((c) => (
               <span key={c.id} className="px-2 py-0.5 rounded bg-indigo-600 text-white text-[10px] font-bold uppercase">
                 {c.name}
+              </span>
+            ))}
+            {article.tags?.map((t) => (
+              <span key={t.id} className="px-2 py-0.5 rounded bg-slate-850 border border-slate-700 text-slate-300 text-[10px] font-semibold">
+                #{t.name}
               </span>
             ))}
             {article.is_featured && (
@@ -185,16 +193,18 @@ export default function ArticleDetailsPage() {
               <div>
                 <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">Views Count</span>
                 <p className="text-xs font-bold text-slate-200 mt-0.5 flex items-center gap-1.5 font-mono">
-                  <Eye className="w-3.5 h-3.5 text-slate-500" />
+                  <Eye className="w-3.5 h-3.5 text-slate-555" />
                   {article.views_count.toLocaleString()}
                 </p>
               </div>
-              {article.pub_date && (
+              {displayDate && (
                 <div>
-                  <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">Published At</span>
+                  <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">
+                    {article.pub_date ? "Published At" : "Created At"}
+                  </span>
                   <p className="text-[10px] font-semibold text-slate-400 mt-1 flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                    {new Date(article.pub_date).toLocaleDateString()}
+                    <Calendar className="w-3.5 h-3.5 text-slate-555" />
+                    {new Date(displayDate).toLocaleDateString()}
                   </p>
                 </div>
               )}
@@ -212,21 +222,30 @@ export default function ArticleDetailsPage() {
               <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                 Change Live Status
               </label>
-              <div className="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-xl border border-slate-850">
-                {(["draft", "pending", "published"] as const).map((s) => (
+              <div className="grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-xl border border-slate-850">
+                {(["draft", "pending", "approved", "rejected"] as const).map((s) => (
                   <button
                     key={s}
+                    disabled={isUpdating}
                     onClick={() => handleStatusChange(s)}
-                    className={`py-1 rounded-lg text-[9px] font-bold uppercase transition-all ${
+                    className={`py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all flex items-center justify-center gap-1 ${
                       article.status === s
-                        ? s === "published"
+                        ? s === "approved"
                           ? "bg-emerald-600 text-white"
                           : s === "pending"
                           ? "bg-amber-600 text-white"
+                          : s === "rejected"
+                          ? "bg-rose-600 text-white"
                           : "bg-slate-700 text-white"
                         : "text-slate-400 hover:text-slate-200"
-                    }`}
+                    } ${isUpdating ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
+                    {isUpdating && article.status === s ? (
+                      <svg className="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    ) : null}
                     {s}
                   </button>
                 ))}
