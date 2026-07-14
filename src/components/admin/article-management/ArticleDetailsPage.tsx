@@ -4,6 +4,7 @@ import { ArrowLeft, Edit2, Star, Calendar, Eye, Globe, ExternalLink, Activity, I
 import { useGetArticleDetailsQuery } from "@/redux/features/articles/articles.api";
 import Loading from "@/components/shared/Loading";
 
+
 export default function ArticleDetailsPage() {
   const router = useRouter();
   const params = useParams();

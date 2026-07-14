@@ -7,11 +7,11 @@ import { useToast } from "@/components/ui/toast";
 import CustomPagination from "@/components/shared/CustomPagination";
 import {
   useGetArticlesQuery,
-  useDeleteArticleMutation,
-  useUpdateArticleMutation,
+  useDeleteArticleMutation
 } from "@/redux/features/articles/articles.api";
 import { useGetCategoriesQuery } from "@/redux/features/categories/categories.api";
 import DeleteArticleModal from "./DeleteArticleModal";
+
 
 
 export default function ArticleManagementPage() {
@@ -49,7 +49,6 @@ export default function ArticleManagementPage() {
   const totalArticles = data?.count || 0;
 
   const [deleteArticle, { isLoading: isDeleting }] = useDeleteArticleMutation();
-  const [updateArticle] = useUpdateArticleMutation();
 
   const [selectedArticleToDelete, setSelectedArticleToDelete] = useState<{ id: string; title: string } | null>(null);
 
@@ -144,16 +143,7 @@ export default function ArticleManagementPage() {
                     pending: "text-amber-400 bg-amber-500/5 border-amber-500/10",
                     rejected: "text-rose-400 bg-rose-500/5 border-rose-500/10",
                   };
-
-                  const sentimentStyles: Record<string, string> = {
-                    positive: "text-emerald-400 bg-emerald-500/5 border-emerald-500/10",
-                    neutral: "text-sky-400 bg-sky-500/5 border-sky-500/10",
-                    negative: "text-rose-400 bg-rose-500/5 border-rose-500/10",
-                  };
-
                   const statusText = art.status || "draft";
-                  const sentimentText = art.sentiment || "neutral";
-
                   return (
                     <tr key={art.id} className="hover:bg-slate-900/20 transition-colors group">
                       <td className="py-4 px-2 max-w-xs">
