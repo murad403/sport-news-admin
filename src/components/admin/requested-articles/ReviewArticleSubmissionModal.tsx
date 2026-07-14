@@ -1,33 +1,15 @@
 "use client";
 import React, { useState } from "react";
-import { X, FileText, ShieldAlert } from "lucide-react";
-
-interface UserRequest {
-  id: string;
-  authorName: string;
-  authorEmail: string;
-  title: string;
-  category: "Soccer" | "Tennis" | "Basketball" | "F1";
-  date: string;
-  status: "Pending" | "Approved" | "Rejected";
-  content: string;
-  rejectReason?: string;
-}
+import { X, FileText } from "lucide-react";
+import { Article } from "@/redux/features/articles/articles.type";
 
 interface ReviewArticleSubmissionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  request: UserRequest;
+  request: Article;
   onApprove: () => void;
   onReject: () => void;
 }
-
-const categoryImages = {
-  Soccer: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80",
-  Tennis: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=800&q=80",
-  Basketball: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80",
-  F1: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80",
-};
 
 export default function ReviewArticleSubmissionModal({
   isOpen,
@@ -47,6 +29,18 @@ export default function ReviewArticleSubmissionModal({
 
   if (!isOpen) return null;
 
+  const categoryName = request.categories?.map((c) => c.name).join(", ") || "No Category";
+  const displayDate = request.created_at ? new Date(request.created_at).toLocaleDateString() : "Unknown";
+  
+  const statusStyles: Record<string, string> = {
+    pending: "text-amber-400 border-amber-500/10 bg-amber-500/5",
+    approved: "text-emerald-400 border-emerald-500/10 bg-emerald-500/5",
+    rejected: "text-rose-400 border-rose-500/10 bg-rose-500/5",
+    draft: "text-slate-400 border-slate-500/10 bg-slate-500/5",
+  };
+
+  const statusText = request.status?.toLowerCase() || "pending";
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
@@ -54,10 +48,10 @@ export default function ReviewArticleSubmissionModal({
         
         {/* Top Banner Image */}
         <div className="relative h-40 w-full overflow-hidden bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 border-b border-slate-800/40">
-          {!imgError ? (
+          {(!imgError && (request.display_image || request.image_url)) ? (
             <img
-              src={categoryImages[request.category] || categoryImages.Soccer}
-              alt={request.category}
+              src={request.display_image || request.image_url || ""}
+              alt={categoryName}
               onError={() => setImgError(true)}
               className="w-full h-full object-cover"
             />
@@ -65,7 +59,7 @@ export default function ReviewArticleSubmissionModal({
             <div className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-indigo-950 via-slate-900 to-indigo-900">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15),transparent_70%)] opacity-60" />
               <span className="text-sm font-bold text-indigo-300 tracking-wider uppercase opacity-40">
-                {request.category} Submission
+                {categoryName} Submission
               </span>
             </div>
           )}
@@ -86,55 +80,37 @@ export default function ReviewArticleSubmissionModal({
             <FileText className="w-5 h-5 text-indigo-400" />
             <div>
               <h3 className="text-sm font-bold text-white">Review Article Submission</h3>
-              <p className="text-[10px] text-slate-500">Submitted by user on {request.date}</p>
+              <p className="text-[10px] text-slate-500">Submitted by user on {displayDate}</p>
             </div>
           </div>
 
           {/* Author info card */}
-          <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-950/60 border border-slate-850 mb-5 text-xs text-slate-300">
+          <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-950/60 border border-slate-855 mb-5 text-xs text-slate-300">
             <div>
               <p className="text-[10px] text-slate-500 font-semibold uppercase">Author</p>
-              <p className="font-semibold text-slate-200 mt-0.5">{request.authorName}</p>
-              <p className="text-[10px] text-slate-500">{request.authorEmail}</p>
+              <p className="font-semibold text-slate-200 mt-0.5">{request.author_name}</p>
             </div>
             <div>
               <p className="text-[10px] text-slate-500 font-semibold uppercase">Category</p>
-              <p className="font-semibold text-slate-200 mt-0.5">{request.category}</p>
-              <span className={`inline-block mt-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold border ${
-                request.status === "Approved"
-                  ? "text-emerald-400 border-emerald-500/10 bg-emerald-500/5"
-                  : request.status === "Rejected"
-                  ? "text-rose-400 border-rose-500/10 bg-rose-500/5"
-                  : "text-amber-400 border-amber-500/10 bg-amber-500/5"
-              }`}>
-                {request.status}
+              <p className="font-semibold text-slate-200 mt-0.5">{categoryName}</p>
+              <span className={`inline-block mt-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold border uppercase ${statusStyles[statusText] || statusStyles.pending}`}>
+                {statusText}
               </span>
             </div>
           </div>
 
           {/* Title / Content */}
-          <div className="space-y-4 max-h-[260px] overflow-y-auto pr-1 no-scrollbar">
+          <div className="space-y-4 max-h-[260px] overflow-y-auto pr-1 no-scrollbar text-xs">
             <div>
-              <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Submitted Title</h4>
+              <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Submitted Title</h4>
               <p className="text-sm font-bold text-white leading-relaxed">{request.title}</p>
             </div>
             <div>
-              <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Submitted Content</h4>
-              <p className="text-xs text-slate-300 whitespace-pre-line leading-relaxed p-4 bg-slate-950/20 rounded-xl border border-slate-850">
+              <h4 className="text-[10px] font-semibold text-slate-550 uppercase tracking-wider mb-1">Submitted Content</h4>
+              <p className="text-slate-350 whitespace-pre-line leading-relaxed p-4 bg-slate-950/20 rounded-xl border border-slate-855">
                 {request.content}
               </p>
             </div>
-            {request.status === "Rejected" && request.rejectReason && (
-              <div className="p-3.5 rounded-xl border border-rose-500/15 bg-rose-500/5 text-rose-300 text-xs">
-                <div className="flex gap-2">
-                  <ShieldAlert className="w-4.5 h-4.5 shrink-0" />
-                  <div>
-                    <p className="font-semibold text-rose-200">Rejection Reason Logged:</p>
-                    <p className="mt-1 text-slate-300">{request.rejectReason}</p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Footer controls */}
@@ -145,7 +121,7 @@ export default function ReviewArticleSubmissionModal({
             >
               Close Reader
             </button>
-            {request.status === "Pending" && (
+            {statusText === "pending" && (
               <>
                 <button
                   onClick={onReject}
