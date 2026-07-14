@@ -34,6 +34,15 @@ export default function EditArticlePage() {
     skip: !articleSlug,
   });
 
+  const mergedCategories = [...categoriesList];
+  if (article?.categories) {
+    article.categories.forEach((cat) => {
+      if (!mergedCategories.some((c) => c.id === cat.id)) {
+        mergedCategories.push(cat);
+      }
+    });
+  }
+
   const [updateArticle] = useUpdateArticleMutation();
 
   const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<ArticleFormValues>({
@@ -45,8 +54,8 @@ export default function EditArticlePage() {
       categories: [],
       tags: [],
       language: "en",
-      is_published: false,
-      is_featured: false,
+      is_published: true,
+      is_featured: true,
     },
   });
 
@@ -70,7 +79,7 @@ export default function EditArticlePage() {
         categories: article.categories.map((c) => c.id),
         tags: article.tags.map((t) => t.id),
         language: article.language,
-        is_published: article.status === "published",
+        is_published: article.is_published,
         is_featured: article.is_featured,
       });
       if (article.display_image || article.image_url) {
@@ -137,6 +146,14 @@ export default function EditArticlePage() {
 
   if (isDetailsLoading) {
     return <Loading title="Loading article..."/>
+  }
+
+  if (!article) {
+    return (
+      <div className="py-20 text-center text-slate-500">
+        <p className="font-semibold text-slate-400">Article not found.</p>
+      </div>
+    );
   }
 
   return (
@@ -272,7 +289,7 @@ export default function EditArticlePage() {
                 className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all cursor-pointer"
               >
                 <option value="">Select a category</option>
-                {categoriesList.map((cat) => (
+                {mergedCategories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
                   </option>
@@ -346,7 +363,7 @@ export default function EditArticlePage() {
 
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {selectedTags.map((tagId) => {
-                  const tagObj = tagsList.find((t) => t.id === tagId);
+                  const tagObj = tagsList.find((t) => t.id === tagId) || article?.tags?.find((t) => t.id === tagId);
                   if (!tagObj) return null;
                   return (
                     <span

@@ -28,6 +28,7 @@ export interface Article {
   sentiment: "positive" | "neutral" | "negative" | null;
   pub_date: string | null;
   is_featured: boolean;
+  is_published: boolean;
   views_count: number;
   status: string;
   created_at: string;

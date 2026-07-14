@@ -60,7 +60,7 @@ export default function ArticleDetailsPage() {
       </div>
 
       {/* Main Cover Banner */}
-      <div className="relative h-60 md:h-72 w-full rounded-2xl overflow-hidden border border-slate-800/80 shadow-lg bg-slate-950">
+      <div className="relative h-60 md:h-140 w-full rounded-2xl overflow-hidden border border-slate-800/80 shadow-lg bg-slate-950">
         {(article.display_image || article.image_url) && (
           <img
             src={article.display_image || article.image_url || ""}
