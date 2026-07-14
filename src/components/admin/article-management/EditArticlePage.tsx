@@ -1,11 +1,9 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { ArrowLeft, Save, Tag, Newspaper, AlertCircle, Upload, X } from "lucide-react";
+import { ArrowLeft, Save, Newspaper, AlertCircle, Upload, X } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import {
   useGetArticleDetailsQuery,
@@ -13,20 +11,9 @@ import {
 } from "@/redux/features/articles/articles.api";
 import { useGetCategoriesQuery } from "@/redux/features/categories/categories.api";
 import { useGetTagsQuery } from "@/redux/features/tags/tags.api";
+import { ArticleFormValues, articleSchema } from "@/validation/article.validation";
 
-const articleSchema = z.object({
-  title: z.string().min(1, "Article title is required"),
-  description: z.string().optional(),
-  content: z.string().min(10, "Article content must be at least 10 characters long"),
-  image: z.any().optional(),
-  categories: z.array(z.string()).min(1, "Select at least one category"),
-  tags: z.array(z.string()).min(1, "Select at least one tag"),
-  language: z.string().min(1, "Language is required"),
-  is_published: z.boolean().default(false),
-  is_featured: z.boolean().default(false),
-});
 
-type ArticleFormValues = z.infer<typeof articleSchema>;
 
 export default function EditArticlePage() {
   const { toast } = useToast();
@@ -48,14 +35,7 @@ export default function EditArticlePage() {
 
   const [updateArticle] = useUpdateArticleMutation();
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<ArticleFormValues>({
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<ArticleFormValues>({
     resolver: zodResolver(articleSchema) as any,
     defaultValues: {
       title: "",
@@ -73,7 +53,7 @@ export default function EditArticlePage() {
   const selectedTags = watch("tags") || [];
   const isPublishedValue = watch("is_published");
   const isFeaturedValue = watch("is_featured");
-  
+
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
 
@@ -199,9 +179,8 @@ export default function EditArticlePage() {
             <input
               type="text"
               {...register("title")}
-              className={`w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border ${
-                errors.title ? "border-rose-500/50" : "border-slate-800"
-              } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all`}
+              className={`w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border ${errors.title ? "border-rose-500/50" : "border-slate-800"
+                } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all`}
             />
             {errors.title && (
               <p className="text-[10px] text-rose-450 font-semibold flex items-center gap-1 mt-1">
@@ -231,9 +210,8 @@ export default function EditArticlePage() {
             <textarea
               rows={12}
               {...register("content")}
-              className={`w-full p-4 bg-slate-950/50 focus:bg-slate-950 border ${
-                errors.content ? "border-rose-500/50" : "border-slate-800"
-              } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none resize-none no-scrollbar`}
+              className={`w-full p-4 bg-slate-950/50 focus:bg-slate-950 border ${errors.content ? "border-rose-500/50" : "border-slate-800"
+                } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none resize-none no-scrollbar`}
             />
             {errors.content && (
               <p className="text-[10px] text-rose-455 font-semibold flex items-center gap-1 mt-1">
@@ -316,7 +294,7 @@ export default function EditArticlePage() {
               <label className="block text-[10px] font-semibold text-slate-555 uppercase tracking-wider">
                 Select Tags *
               </label>
-              
+
               <div className="relative">
                 <input
                   type="text"
@@ -356,8 +334,8 @@ export default function EditArticlePage() {
                         t.name.toLowerCase().includes(tagSearch.toLowerCase()) &&
                         !selectedTags.includes(t.id)
                     ).length === 0 && (
-                      <p className="px-4 py-2.5 text-xs text-slate-500 italic">No matching tags found</p>
-                    )}
+                        <p className="px-4 py-2.5 text-xs text-slate-500 italic">No matching tags found</p>
+                      )}
                   </div>
                 )}
               </div>

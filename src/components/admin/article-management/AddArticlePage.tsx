@@ -1,29 +1,14 @@
 "use client";
-
 import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { ArrowLeft, Save, Tag, Newspaper, AlertCircle, Upload, X } from "lucide-react";
+import { ArrowLeft, Save, Newspaper, AlertCircle, Upload, X } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { useAddArticleMutation } from "@/redux/features/articles/articles.api";
 import { useGetCategoriesQuery } from "@/redux/features/categories/categories.api";
 import { useGetTagsQuery } from "@/redux/features/tags/tags.api";
-
-const articleSchema = z.object({
-  title: z.string().min(1, "Article title is required"),
-  description: z.string().optional(),
-  content: z.string().min(10, "Article content must be at least 10 characters long"),
-  image: z.any().optional(),
-  categories: z.array(z.string()).min(1, "Select at least one category"),
-  tags: z.array(z.string()).min(1, "Select at least one tag"),
-  language: z.string().min(1, "Language is required"),
-  is_published: z.boolean().default(false),
-  is_featured: z.boolean().default(false),
-});
-
-type ArticleFormValues = z.infer<typeof articleSchema>;
+import { ArticleFormValues, articleSchema } from "@/validation/article.validation";
 
 export default function AddArticlePage() {
   const { toast } = useToast();
