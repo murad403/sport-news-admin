@@ -1,141 +1,39 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Edit2, Star, Calendar, Eye, Globe, ExternalLink, Activity, Info } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface ArticleTag {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface Article {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  content: string;
-  image_url: string;
-  link?: string;
-  categories: Category[];
-  tags: ArticleTag[];
-  author_name: string;
-  source_name: string;
-  source_url: string;
-  language: string;
-  sentiment: "positive" | "neutral" | "negative";
-  pub_date: string;
-  is_featured: boolean;
-  views_count: number;
-  status: "pending" | "published" | "draft";
-  created_at: string;
-  updated_at: string;
-}
+import {
+  useGetArticleDetailsQuery,
+  useUpdateArticleMutation,
+} from "@/redux/features/articles/articles.api";
 
 export default function ArticleDetailsPage() {
   const { toast } = useToast();
   const router = useRouter();
   const params = useParams();
   const lang = params?.lang || "en";
-  const articleId = params?.id;
+  const articleSlug = params?.id as string;
 
-  const [article, setArticle] = useState<Article | null>(null);
-  const [currentStatus, setCurrentStatus] = useState<"pending" | "published" | "draft">("draft");
+  const { data: article, isLoading } = useGetArticleDetailsQuery(articleSlug, {
+    skip: !articleSlug,
+  });
+  const [updateArticle] = useUpdateArticleMutation();
 
-  // Fetch article data based on parameter ID
-  useEffect(() => {
-    // Mock database fetch
-    let foundArticle: Article;
-    if (articleId === "art-101") {
-      foundArticle = {
-        id: "art-101",
-        title: "Mbappe Shines as Real Madrid Secure Super Cup Victory",
-        slug: "mbappe-shines-real-madrid-super-cup-victory",
-        description: "Kylian Mbappe scored on his debut to help Real Madrid secure a 2-0 victory over Atalanta.",
-        content: "Kylian Mbappe made a dream start to his Real Madrid career, scoring a clinical second goal to seal a 2-0 victory over Atalanta in the UEFA Super Cup on Wednesday.\n\nThe French forward converted Jude Bellingham's low pass into the top corner in the 68th minute after Federico Valverde had tapped in the opener.\n\nThis victory marks a spectacular debut for Mbappe who completed a highly-anticipated transfer to Madrid earlier this season. Speaking to journalists after the match, Mbappe expressed his excitement: 'This is a historic moment for me. Scoring on my debut is a dream, but winning a trophy is even better.'",
-        image_url: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80",
-        link: "https://espn.com/real-madrid-story",
-        categories: [{ id: "cat-1", name: "Soccer", slug: "soccer" }],
-        tags: [
-          { id: "tag-1", name: "Mbappe", slug: "mbappe" },
-          { id: "tag-2", name: "Real Madrid", slug: "real-madrid" }
-        ],
-        author_name: "Marcus Vance",
-        source_name: "ESPN",
-        source_url: "https://espn.com",
-        language: "English",
-        sentiment: "positive",
-        pub_date: "2026-07-01T14:30:00Z",
-        is_featured: true,
-        views_count: 3420,
-        status: "published",
-        created_at: "2026-07-01T14:30:00Z",
-        updated_at: "2026-07-01T14:30:00Z"
-      };
-    } else if (articleId === "art-102") {
-      foundArticle = {
-        id: "art-102",
-        title: "Hamilton Hits Out at Monaco GP Grid Penalties Layout",
-        slug: "hamilton-hits-out-monaco-gp-grid-penalties-layout",
-        description: "Hamilton criticizes the stewards after receiving a controversial three-place grid penalty in Monaco.",
-        content: "Lewis Hamilton hit out at Monaco GP race stewards, calling their decision to award him a three-place grid penalty 'unfair' and 'ruinous' for his race prospects on the narrow street circuit.\n\nThe Mercedes driver was penalized for allegedly impeding another car during the final minutes of qualifying. This penalty pushes him down from second to fifth place on the start line.",
-        image_url: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80",
-        categories: [{ id: "cat-4", name: "F1", slug: "f1" }],
-        tags: [{ id: "tag-3", name: "Hamilton", slug: "hamilton" }],
-        author_name: "Helena Rostova",
-        source_name: "Sky Sports",
-        source_url: "https://skysports.com",
-        language: "English",
-        sentiment: "negative",
-        pub_date: "2026-07-02T08:15:00Z",
-        is_featured: false,
-        views_count: 1105,
-        status: "published",
-        created_at: "2026-07-02T08:15:00Z",
-        updated_at: "2026-07-02T08:15:00Z"
-      };
-    } else {
-      foundArticle = {
-        id: "art-103",
-        title: "Tactical breakdown: The mechanics of Curry's high arc release",
-        slug: "tactical-breakdown-mechanics-curry-high-arc-release",
-        description: "An in-depth biomechanical study of Stephen Curry's legendary three-point shooting technique.",
-        content: "Steph Curry's shot release takes an average of 0.3 seconds. By utilizing an elevated 55-degree release arc, Curry increases the hoop target width area dynamically.\n\nThis breakdown covers the biomechanics, release speed, deceleration rates, and historical statistics that define Curry's shooting supremacy in the NBA.",
-        image_url: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80",
-        categories: [{ id: "cat-3", name: "Basketball", slug: "basketball" }],
-        tags: [{ id: "tag-4", name: "Curry", slug: "curry" }],
-        author_name: "Derrick Rose Jr.",
-        source_name: "The Athletic",
-        source_url: "https://theathletic.com",
-        language: "English",
-        sentiment: "neutral",
-        pub_date: "2026-06-28T10:00:00Z",
-        is_featured: false,
-        views_count: 980,
-        status: "draft",
-        created_at: "2026-06-28T10:00:00Z",
-        updated_at: "2026-06-28T10:00:00Z"
-      };
+  const handleStatusChange = async (newStatus: "pending" | "published" | "draft") => {
+    if (!article) return;
+    try {
+      const formData = new FormData();
+      formData.append("status", newStatus);
+      await updateArticle({ id: article.id, data: formData }).unwrap();
+      toast(`Article status changed to ${newStatus}`, "success");
+    } catch (err: any) {
+      toast("Failed to update status", "error");
     }
-
-    setArticle(foundArticle);
-    setCurrentStatus(foundArticle.status);
-  }, [articleId]);
-
-  const handleStatusChange = (newStatus: "pending" | "published" | "draft") => {
-    setCurrentStatus(newStatus);
-    toast(`Article status changed to ${newStatus}`, "success");
   };
 
-  if (!article) {
+  if (isLoading) {
     return (
       <div className="py-20 text-center text-slate-500">
         <p className="font-semibold text-slate-400">Loading article details...</p>
@@ -143,11 +41,21 @@ export default function ArticleDetailsPage() {
     );
   }
 
-  const sentimentColors = {
+  if (!article) {
+    return (
+      <div className="py-20 text-center text-slate-500">
+        <p className="font-semibold text-slate-400">Article not found.</p>
+      </div>
+    );
+  }
+
+  const sentimentColors: Record<string, string> = {
     positive: "text-emerald-400 border-emerald-500/15 bg-emerald-500/5",
     neutral: "text-sky-400 border-sky-500/15 bg-sky-500/5",
     negative: "text-rose-400 border-rose-500/15 bg-rose-500/5",
   };
+
+  const sentimentText = article.sentiment || "neutral";
 
   return (
     <div className="space-y-6">
@@ -174,11 +82,13 @@ export default function ArticleDetailsPage() {
 
       {/* Main Cover Banner */}
       <div className="relative h-60 md:h-72 w-full rounded-2xl overflow-hidden border border-slate-800/80 shadow-lg bg-slate-950">
-        <img
-          src={article.image_url}
-          alt={article.title}
-          className="w-full h-full object-cover"
-        />
+        {(article.display_image || article.image_url) && (
+          <img
+            src={article.display_image || article.image_url || ""}
+            alt={article.title}
+            className="w-full h-full object-cover"
+          />
+        )}
         <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/40 to-transparent" />
         <div className="absolute bottom-5 left-6 right-6">
           <div className="flex flex-wrap gap-1.5 mb-2">
@@ -189,7 +99,7 @@ export default function ArticleDetailsPage() {
             ))}
             {article.is_featured && (
               <span className="px-2 py-0.5 rounded bg-amber-500 text-slate-950 text-[10px] font-bold flex items-center gap-0.5 uppercase">
-                <Star className="w-3 h-3 fill-slate-950" />
+                <Star className="w-3.5 h-3.5 fill-slate-950 text-slate-950" />
                 Featured
               </span>
             )}
@@ -206,14 +116,14 @@ export default function ArticleDetailsPage() {
         <div className="lg:col-span-2 p-6 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-lg space-y-5">
           <div>
             <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Description</h4>
-            <p className="text-xs font-semibold text-slate-350 italic border-l-2 border-indigo-500/50 pl-3 leading-relaxed">
+            <p className="text-xs font-semibold text-slate-300 italic border-l-2 border-indigo-500/50 pl-3 leading-relaxed">
               {article.description}
             </p>
           </div>
 
           <div className="pt-2 border-t border-slate-800/40">
             <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2.5">Article Content</h4>
-            <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-line">
+            <p className="text-xs text-slate-200 leading-relaxed whitespace-pre-line">
               {article.content}
             </p>
           </div>
@@ -235,35 +145,37 @@ export default function ArticleDetailsPage() {
             </div>
 
             {/* Original Source */}
-            <div>
-              <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">Origin Source</span>
-              <div className="flex items-center justify-between mt-0.5">
-                <span className="text-xs font-semibold text-slate-200">{article.source_name}</span>
-                <a
-                  href={article.source_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[10px] text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1"
-                >
-                  Visit Link
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+            {article.source_name && (
+              <div>
+                <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">Origin Source</span>
+                <div className="flex items-center justify-between mt-0.5">
+                  <span className="text-xs font-semibold text-slate-200">{article.source_name}</span>
+                  <a
+                    href={article.source_url || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1"
+                  >
+                    Visit Link
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Sentiment & Language */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">Language</span>
                 <p className="text-xs font-semibold text-slate-200 mt-0.5 flex items-center gap-1">
-                  <Globe className="w-3.5 h-3.5 text-slate-500" />
+                  <Globe className="w-3.5 h-3.5 text-slate-550" />
                   {article.language}
                 </p>
               </div>
               <div>
                 <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">Sentiment</span>
-                <div className={`mt-1 px-2 py-0.5 rounded border text-[9px] font-bold inline-block uppercase ${sentimentColors[article.sentiment]}`}>
-                  {article.sentiment}
+                <div className={`mt-1 px-2 py-0.5 rounded border text-[9px] font-bold inline-block uppercase ${sentimentColors[sentimentText] || sentimentColors.neutral}`}>
+                  {sentimentText}
                 </div>
               </div>
             </div>
@@ -277,13 +189,15 @@ export default function ArticleDetailsPage() {
                   {article.views_count.toLocaleString()}
                 </p>
               </div>
-              <div>
-                <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">Published At</span>
-                <p className="text-[10px] font-semibold text-slate-400 mt-1 flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                  {new Date(article.pub_date).toLocaleDateString()}
-                </p>
-              </div>
+              {article.pub_date && (
+                <div>
+                  <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">Published At</span>
+                  <p className="text-[10px] font-semibold text-slate-400 mt-1 flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                    {new Date(article.pub_date).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -304,7 +218,7 @@ export default function ArticleDetailsPage() {
                     key={s}
                     onClick={() => handleStatusChange(s)}
                     className={`py-1 rounded-lg text-[9px] font-bold uppercase transition-all ${
-                      currentStatus === s
+                      article.status === s
                         ? s === "published"
                           ? "bg-emerald-600 text-white"
                           : s === "pending"

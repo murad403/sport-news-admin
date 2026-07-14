@@ -1,28 +1,26 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { ArrowLeft, Save, Star, Tag, Newspaper, AlertCircle } from "lucide-react";
+import { ArrowLeft, Save, Tag, Newspaper, AlertCircle, Upload, X } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { useAddArticleMutation } from "@/redux/features/articles/articles.api";
+import { useGetCategoriesQuery } from "@/redux/features/categories/categories.api";
+import { useGetTagsQuery } from "@/redux/features/tags/tags.api";
 
 const articleSchema = z.object({
   title: z.string().min(1, "Article title is required"),
   description: z.string().optional(),
   content: z.string().min(10, "Article content must be at least 10 characters long"),
-  imageUrl: z.string().url("Please enter a valid image URL").or(z.literal("")),
-  externalLink: z.string().url("Please enter a valid article URL").or(z.literal("")),
+  image: z.any().optional(),
   categories: z.array(z.string()).min(1, "Select at least one category"),
-  tagsInput: z.string().optional(),
-  authorName: z.string().min(1, "Author name is required"),
-  sourceName: z.string().optional(),
-  sourceUrl: z.string().url("Please enter a valid source URL").or(z.literal("")),
-  language: z.string().default("English"),
-  sentiment: z.enum(["positive", "neutral", "negative"]).default("positive"),
-  status: z.enum(["pending", "published", "draft"]).default("draft"),
-  isFeatured: z.boolean().default(false),
+  tags: z.array(z.string()).min(1, "Select at least one tag"),
+  language: z.string().min(1, "Language is required"),
+  is_published: z.boolean().default(false),
+  is_featured: z.boolean().default(false),
 });
 
 type ArticleFormValues = z.infer<typeof articleSchema>;
@@ -33,50 +31,90 @@ export default function AddArticlePage() {
   const params = useParams();
   const lang = params?.lang || "en";
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors, isSubmitting },
-  } = useForm<ArticleFormValues>({
+  const { data: categoriesData } = useGetCategoriesQuery({});
+  const categoriesList = categoriesData?.results || [];
+
+  const { data: tagsData } = useGetTagsQuery({});
+  const tagsList = tagsData?.results || [];
+
+  const [addArticle] = useAddArticleMutation();
+
+  const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<ArticleFormValues>({
     resolver: zodResolver(articleSchema) as any,
     defaultValues: {
       title: "",
       description: "",
       content: "",
-      imageUrl: "",
-      externalLink: "",
       categories: [],
-      tagsInput: "",
-      authorName: "Alex Mercer",
-      sourceName: "",
-      sourceUrl: "",
-      language: "English",
-      sentiment: "positive",
-      status: "draft",
-      isFeatured: false,
+      tags: [],
+      language: "en",
+      is_published: true,
+      is_featured: false,
     },
   });
 
   const selectedCategories = watch("categories") || [];
-  const isFeaturedValue = watch("isFeatured");
+  const selectedTags = watch("tags") || [];
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isZoomed, setIsZoomed] = useState(false);
 
-  const handleCategoryToggle = (catName: string) => {
-    const next = selectedCategories.includes(catName)
-      ? selectedCategories.filter((c) => c !== catName)
-      : [...selectedCategories, catName];
-    setValue("categories", next, { shouldValidate: true });
+  const [tagSearch, setTagSearch] = useState("");
+  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
+
+  const handleAddTag = (tagId: string) => {
+    setValue("tags", [...selectedTags, tagId], { shouldValidate: true });
+    setTagSearch("");
+    setShowTagSuggestions(false);
   };
 
-  const onSubmit = (data: ArticleFormValues) => {
-    toast("Article created successfully!", "success");
-    setTimeout(() => {
+  const handleRemoveTag = (tagId: string) => {
+    setValue("tags", selectedTags.filter((id) => id !== tagId), { shouldValidate: true });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setValue("image", e.target.files);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const onSubmit = async (values: ArticleFormValues) => {
+    try {
+      const formData = new FormData();
+      formData.append("title", values.title);
+      if (values.description) {
+        formData.append("description", values.description);
+      }
+      formData.append("content", values.content);
+
+      if (values.image && values.image[0]) {
+        formData.append("display_image", values.image[0]);
+      }
+
+      values.categories.forEach((catId) => {
+        formData.append("categories", catId);
+      });
+      values.tags.forEach((tagId) => {
+        formData.append("tags", tagId);
+      });
+
+      formData.append("language", values.language);
+      formData.append("is_published", String(values.is_published));
+      formData.append("is_featured", String(values.is_featured));
+
+      await addArticle(formData).unwrap();
+      toast("Article created successfully!", "success");
       router.push(`/${lang}/admin/article-management`);
-    }, 1000);
+    } catch (err: any) {
+      const errorMsg = err?.data?.detail || err?.data?.message || "Failed to create article.";
+      toast(errorMsg, "error");
+    }
   };
-
-  const categoriesList = ["Soccer", "Tennis", "Basketball", "F1", "Cricket", "Volleyball"];
 
   return (
     <div className="space-y-6">
@@ -109,16 +147,15 @@ export default function AddArticlePage() {
 
           {/* Title */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-300">
-              Article Title
+            <label className="block text-xs font-semibold text-slate-350">
+              Article Title *
             </label>
             <input
               type="text"
               placeholder="e.g. Manchester City Reclaim Premier League Crown..."
               {...register("title")}
-              className={`w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border ${
-                errors.title ? "border-rose-500/50 focus:ring-rose-500/20" : "border-slate-800 focus:ring-indigo-500/50"
-              } focus:ring-1 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all`}
+              className={`w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border ${errors.title ? "border-rose-500/50 focus:ring-rose-500/20" : "border-slate-800 focus:ring-indigo-500/50"
+                } focus:ring-1 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all`}
             />
             {errors.title && (
               <p className="text-[10px] text-rose-400 font-semibold flex items-center gap-1 mt-1">
@@ -130,29 +167,28 @@ export default function AddArticlePage() {
 
           {/* Description */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-300">
+            <label className="block text-xs font-semibold text-slate-355">
               Short Description / Summary
             </label>
             <textarea
               placeholder="A brief 1-2 sentence overview summarizing the story..."
               rows={3}
               {...register("description")}
-              className="w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-550 outline-none transition-all resize-none"
+              className="w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none transition-all resize-none"
             />
           </div>
 
           {/* Content */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-300">
-              Article Content
+            <label className="block text-xs font-semibold text-slate-355">
+              Article Content *
             </label>
             <textarea
               placeholder="Write full article body content..."
               rows={12}
               {...register("content")}
-              className={`w-full p-4 bg-slate-950/50 focus:bg-slate-950 border ${
-                errors.content ? "border-rose-500/50 focus:ring-rose-500/20" : "border-slate-800 focus:ring-indigo-500/50"
-              } focus:ring-1 rounded-xl text-xs text-slate-200 placeholder-slate-550 outline-none resize-none no-scrollbar`}
+              className={`w-full p-4 bg-slate-950/50 focus:bg-slate-950 border ${errors.content ? "border-rose-500/50 focus:ring-rose-500/20" : "border-slate-800 focus:ring-indigo-500/50"
+                } focus:ring-1 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none resize-none no-scrollbar`}
             />
             {errors.content && (
               <p className="text-[10px] text-rose-400 font-semibold flex items-center gap-1 mt-1">
@@ -162,44 +198,33 @@ export default function AddArticlePage() {
             )}
           </div>
 
-          {/* Media Header Image URL */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-300">
-                Display Image URL
+          {/* Image Upload */}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-slate-355">
+              Display Image
+            </label>
+            <div className="flex items-center gap-4">
+              <label className="cursor-pointer flex items-center gap-2 px-4 py-2.5 bg-slate-950 hover:bg-slate-900 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 transition-all">
+                <Upload className="w-4 h-4 text-indigo-400" />
+                Choose Image File
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
               </label>
-              <input
-                type="text"
-                placeholder="https://example.com/image.jpg"
-                {...register("imageUrl")}
-                className={`w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border ${
-                  errors.imageUrl ? "border-rose-500/50 focus:ring-rose-500/20" : "border-slate-800 focus:ring-indigo-500/50"
-                } focus:ring-1 rounded-xl text-xs text-slate-200 placeholder-slate-550 outline-none transition-all`}
-              />
-              {errors.imageUrl && (
-                <p className="text-[10px] text-rose-400 font-semibold flex items-center gap-1 mt-1">
-                  <AlertCircle className="w-3 h-3" />
-                  {errors.imageUrl.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-300">
-                Original Article Link (Optional)
-              </label>
-              <input
-                type="text"
-                placeholder="https://espn.com/news-story-link"
-                {...register("externalLink")}
-                className={`w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border ${
-                  errors.externalLink ? "border-rose-500/50" : "border-slate-800"
-                } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-550 outline-none transition-all`}
-              />
-              {errors.externalLink && (
-                <p className="text-[10px] text-rose-400 font-semibold flex items-center gap-1 mt-1">
-                  <AlertCircle className="w-3 h-3" />
-                  {errors.externalLink.message}
-                </p>
+              {imagePreview && (
+                <div className="relative group cursor-zoom-in" onClick={() => setIsZoomed(true)}>
+                  <img
+                    src={imagePreview}
+                    alt="Upload Preview"
+                    className="w-16 h-16 rounded-xl object-cover border border-slate-800 shadow-md transition-transform hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center text-[10px] text-white font-semibold">
+                    Enlarge
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -207,36 +232,32 @@ export default function AddArticlePage() {
 
         {/* Right Column - Publishing Metadata (Spans 1 column) */}
         <div className="space-y-5">
-          {/* Classification & Metadata Panel */}
+          {/* Classification Panel */}
           <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-lg space-y-4">
             <h3 className="text-sm font-semibold text-slate-200 border-b border-slate-800/60 pb-3">
               Classification
             </h3>
 
-            {/* Categories */}
+            {/* Categories dropdown select */}
             <div className="space-y-2">
-              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                Select Categories
+              <label className="block text-[10px] font-semibold text-slate-550 uppercase tracking-wider">
+                Select Category *
               </label>
-              <div className="grid grid-cols-2 gap-2">
-                {categoriesList.map((cat) => {
-                  const isChecked = selectedCategories.includes(cat);
-                  return (
-                    <button
-                      type="button"
-                      key={cat}
-                      onClick={() => handleCategoryToggle(cat)}
-                      className={`px-3 py-2 border rounded-xl text-left text-[11px] font-semibold transition-all ${
-                        isChecked
-                          ? "bg-indigo-600/15 border-indigo-500/30 text-indigo-300"
-                          : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  );
-                })}
-              </div>
+              <select
+                value={selectedCategories[0] || ""}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setValue("categories", val ? [val] : [], { shouldValidate: true });
+                }}
+                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all cursor-pointer"
+              >
+                <option value="">Select a category</option>
+                {categoriesList.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
               {errors.categories && (
                 <p className="text-[10px] text-rose-400 font-semibold flex items-center gap-1 mt-1">
                   <AlertCircle className="w-3 h-3" />
@@ -245,138 +266,132 @@ export default function AddArticlePage() {
               )}
             </div>
 
-            {/* Tags Input */}
-            <div className="space-y-1.5 pt-2">
-              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                Tags (Comma-separated)
+            {/* Tags Select Autocomplete */}
+            <div className="space-y-2 pt-2 relative">
+              <label className="block text-[10px] font-semibold text-slate-555 uppercase tracking-wider">
+                Select Tags *
               </label>
+
               <div className="relative">
-                <Tag className="absolute left-3 top-3 w-3.5 h-3.5 text-slate-500" />
                 <input
                   type="text"
-                  placeholder="mbappe, madrid, champions-league"
-                  {...register("tagsInput")}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none transition-all"
+                  placeholder="Type to search tags..."
+                  value={tagSearch}
+                  onChange={(e) => {
+                    setTagSearch(e.target.value);
+                    setShowTagSuggestions(true);
+                  }}
+                  onFocus={() => setShowTagSuggestions(true)}
+                  onBlur={() => {
+                    setTimeout(() => setShowTagSuggestions(false), 200);
+                  }}
+                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none transition-all"
                 />
+
+                {showTagSuggestions && tagSearch.trim() !== "" && (
+                  <div className="absolute left-0 right-0 mt-1.5 max-h-40 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl z-20 shadow-2xl divide-y divide-slate-900/60 no-scrollbar">
+                    {tagsList
+                      .filter(
+                        (t) =>
+                          t.name.toLowerCase().includes(tagSearch.toLowerCase()) &&
+                          !selectedTags.includes(t.id)
+                      )
+                      .map((tag) => (
+                        <button
+                          type="button"
+                          key={tag.id}
+                          onClick={() => handleAddTag(tag.id)}
+                          className="w-full px-4 py-2.5 text-left text-xs text-slate-300 hover:bg-slate-900 hover:text-white transition-colors"
+                        >
+                          {tag.name}
+                        </button>
+                      ))}
+                    {tagsList.filter(
+                      (t) =>
+                        t.name.toLowerCase().includes(tagSearch.toLowerCase()) &&
+                        !selectedTags.includes(t.id)
+                    ).length === 0 && (
+                        <p className="px-4 py-2.5 text-xs text-slate-500 italic">No matching tags found</p>
+                      )}
+                  </div>
+                )}
+              </div>
+
+              {errors.tags && (
+                <p className="text-[10px] text-rose-450 font-semibold flex items-center gap-1 mt-1">
+                  <AlertCircle className="w-3 h-3" />
+                  {errors.tags.message}
+                </p>
+              )}
+
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {selectedTags.map((tagId) => {
+                  const tagObj = tagsList.find((t) => t.id === tagId);
+                  if (!tagObj) return null;
+                  return (
+                    <span
+                      key={tagId}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-950 text-indigo-300 border border-indigo-500/10 text-[10px] font-semibold animate-in fade-in duration-150"
+                    >
+                      {tagObj.name}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTag(tagId)}
+                        className="text-indigo-455 hover:text-indigo-200 transition-colors ml-1 font-bold cursor-pointer"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  );
+                })}
               </div>
             </div>
           </div>
 
-          {/* Publishing settings */}
+          {/* Publishing Settings */}
           <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-lg space-y-4">
             <h3 className="text-sm font-semibold text-slate-200 border-b border-slate-800/60 pb-3">
               Publishing Options
             </h3>
 
-            {/* Author Name */}
+            {/* Language */}
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                Author Name
+              <label className="block text-[10px] font-semibold text-slate-550 uppercase tracking-wider">
+                Language
               </label>
               <input
                 type="text"
-                {...register("authorName")}
+                {...register("language")}
                 className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all"
               />
-              {errors.authorName && (
-                <p className="text-[10px] text-rose-400 font-semibold flex items-center gap-1 mt-1">
-                  <AlertCircle className="w-3 h-3" />
-                  {errors.authorName.message}
-                </p>
-              )}
             </div>
 
-            {/* Source details */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                  Source Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. ESPN"
-                  {...register("sourceName")}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none transition-all"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                  Source URL
-                </label>
-                <input
-                  type="text"
-                  placeholder="https://..."
-                  {...register("sourceUrl")}
-                  className={`w-full px-3 py-2 bg-slate-950 border ${
-                    errors.sourceUrl ? "border-rose-500/50" : "border-slate-800"
-                  } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none transition-all`}
-                />
-                {errors.sourceUrl && (
-                  <p className="text-[10px] text-rose-400 font-semibold flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3 h-3" />
-                    {errors.sourceUrl.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Language & Sentiment Grid */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                  Language
-                </label>
-                <select
-                  {...register("language")}
-                  className="w-full px-2.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 outline-none transition-all"
-                >
-                  <option value="English">English</option>
-                  <option value="Spanish">Spanish</option>
-                  <option value="Bengali">Bengali</option>
-                </select>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                  Sentiment
-                </label>
-                <select
-                  {...register("sentiment")}
-                  className="w-full px-2.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 outline-none transition-all"
-                >
-                  <option value="positive">Positive</option>
-                  <option value="neutral">Neutral</option>
-                  <option value="negative">Negative</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Status Select */}
-            <div className="space-y-1.5 pt-2">
-              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+            {/* Status Option dropdown */}
+            <div className="space-y-1.5">
+              <label className="block text-[10px] font-semibold text-slate-550 uppercase tracking-wider">
                 Publishing Status
               </label>
               <select
-                {...register("status")}
-                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-855 rounded-xl text-xs text-slate-200 outline-none transition-all"
+                onChange={(e) => setValue("is_published", e.target.value === "true")}
+                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-xs text-slate-200 outline-none transition-all cursor-pointer"
               >
-                <option value="draft">Draft (Private)</option>
-                <option value="pending">Pending Review</option>
-                <option value="published">Published (Live)</option>
+                <option value="true">true</option>
+                <option value="false">false</option>
               </select>
             </div>
 
-            {/* Featured toggle */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-850 mt-3.5">
-              <div className="flex items-center gap-2">
-                <Star className={`w-4 h-4 ${isFeaturedValue ? "text-amber-400 fill-amber-400" : "text-slate-500"}`} />
-                <span className="text-xs font-semibold text-slate-300">Feature this Article</span>
-              </div>
-              <input
-                type="checkbox"
-                {...register("isFeatured")}
-                className="w-4 h-4 rounded text-indigo-600 bg-slate-950 border-slate-800 focus:ring-0 cursor-pointer accent-indigo-500"
-              />
+            {/* Featured option dropdown */}
+            <div className="space-y-1.5">
+              <label className="block text-[10px] font-semibold text-slate-550 uppercase tracking-wider">
+                Is Featured
+              </label>
+              <select
+                onChange={(e) => setValue("is_featured", e.target.value === "true")}
+                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-xs text-slate-200 outline-none transition-all cursor-pointer"
+              >
+                <option value="false">false</option>
+                <option value="true">true</option>
+              </select>
             </div>
           </div>
 
@@ -394,12 +409,45 @@ export default function AddArticlePage() {
               disabled={isSubmitting}
               className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 rounded-xl text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 flex items-center justify-center gap-1.5"
             >
-              <Save className="w-4 h-4" />
-              Save Article
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Save Article
+                </>
+              )}
             </button>
           </div>
         </div>
       </form>
+
+      {/* Lightbox / Zoom Overlay */}
+      {isZoomed && imagePreview && (
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm" onClick={() => setIsZoomed(false)} />
+          <div className="relative max-w-3xl max-h-[85vh] bg-slate-950 rounded-2xl overflow-hidden border border-slate-850 z-10 p-2 animate-in zoom-in-95 duration-200">
+            <button
+              type="button"
+              onClick={() => setIsZoomed(false)}
+              className="absolute top-4 right-4 p-2 bg-black/60 hover:bg-black/80 rounded-full text-white transition-colors z-20"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <img
+              src={imagePreview}
+              alt="Enlarged Preview"
+              className="max-w-full max-h-[80vh] rounded-xl object-contain"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,8 +1,13 @@
 import baseApi from "@/redux/api/api";
+import {
+  Article,
+  GetArticlesResponse,
+  GetArticlesQueryArg,
+} from "./articles.type";
 
 const articlesApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getArticles: builder.query({
+        getArticles: builder.query<GetArticlesResponse, GetArticlesQueryArg>({
             query: (params) => {
                 return {
                     url: "/news/",
@@ -12,7 +17,7 @@ const articlesApi = baseApi.injectEndpoints({
             },
             providesTags: ["Articles"]
         }),
-        getArticleDetails: builder.query({
+        getArticleDetails: builder.query<Article, string>({
             query: (slug) => {
                 return {
                     url: `/news/${slug}/`,
@@ -21,7 +26,7 @@ const articlesApi = baseApi.injectEndpoints({
             },
             providesTags: ["Articles"]
         }),
-        addArticle: builder.mutation({
+        addArticle: builder.mutation<Article, FormData>({
             query: (data) => {
                 return {
                     url: `/news/manual/`,
@@ -31,7 +36,7 @@ const articlesApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ["Articles"]
         }),
-        updateArticle: builder.mutation({
+        updateArticle: builder.mutation<Article, { id: string; data: FormData }>({
             query: ({ id, data }) => {
                 return {
                     url: `/news/news/${id}/manage/`,
@@ -41,7 +46,7 @@ const articlesApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ["Articles"]
         }),
-        deleteArticle: builder.mutation({
+        deleteArticle: builder.mutation<void, string>({
             query: (id) => {
                 return {
                     url: `/news/news/${id}/manage/`,
