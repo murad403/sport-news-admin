@@ -11,6 +11,7 @@ import {
   useUpdateArticleMutation,
 } from "@/redux/features/articles/articles.api";
 import { useGetCategoriesQuery } from "@/redux/features/categories/categories.api";
+import DeleteArticleModal from "./DeleteArticleModal";
 
 
 export default function ArticleManagementPage() {
@@ -47,19 +48,10 @@ export default function ArticleManagementPage() {
   const articles = data?.results || [];
   const totalArticles = data?.count || 0;
 
-  const [deleteArticle] = useDeleteArticleMutation();
+  const [deleteArticle, { isLoading: isDeleting }] = useDeleteArticleMutation();
   const [updateArticle] = useUpdateArticleMutation();
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this article?")) {
-      try {
-        await deleteArticle(id).unwrap();
-        toast("Article deleted successfully", "success");
-      } catch (err: any) {
-        toast("Failed to delete article", "error");
-      }
-    }
-  };
+  const [selectedArticleToDelete, setSelectedArticleToDelete] = useState<{ id: string; title: string } | null>(null);
 
   return (
     <div className="space-y-6">
@@ -248,7 +240,7 @@ export default function ArticleManagementPage() {
                           </Link>
 
                           <Link
-                            href={`/${lang}/admin/article-management/edit-article?id=${art.id}`}
+                            href={`/${lang}/admin/article-management/edit-article?slug=${art.slug}`}
                             className="p-1.5 text-slate-400 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-all"
                             title="Edit Article"
                           >
@@ -256,8 +248,8 @@ export default function ArticleManagementPage() {
                           </Link>
 
                           <button
-                            onClick={() => handleDelete(art.id)}
-                            className="p-1.5 text-slate-400 hover:text-rose-450 hover:bg-rose-500/10 rounded-lg transition-all"
+                            onClick={() => setSelectedArticleToDelete({ id: art.id, title: art.title })}
+                            className="p-1.5 text-slate-400 hover:text-rose-455 hover:bg-rose-500/10 rounded-lg transition-all"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -279,6 +271,23 @@ export default function ArticleManagementPage() {
           onChange={(newPage) => setPage(newPage)}
         />
       </div>
+
+      <DeleteArticleModal
+        isOpen={!!selectedArticleToDelete}
+        onClose={() => setSelectedArticleToDelete(null)}
+        onConfirm={async () => {
+          if (!selectedArticleToDelete) return;
+          try {
+            await deleteArticle(selectedArticleToDelete.id).unwrap();
+            toast("Article deleted successfully", "success");
+            setSelectedArticleToDelete(null);
+          } catch (err: any) {
+            toast("Failed to delete article", "error");
+          }
+        }}
+        articleTitle={selectedArticleToDelete?.title || ""}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

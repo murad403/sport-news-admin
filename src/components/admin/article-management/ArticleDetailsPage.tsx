@@ -1,14 +1,9 @@
 "use client";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Edit2, Star, Calendar, Eye, Globe, ExternalLink, Activity, Info } from "lucide-react";
-import { useToast } from "@/components/ui/toast";
-import {
-  useGetArticleDetailsQuery,
-  useUpdateArticleMutation,
-} from "@/redux/features/articles/articles.api";
+import { useGetArticleDetailsQuery } from "@/redux/features/articles/articles.api";
 
 export default function ArticleDetailsPage() {
-  const { toast } = useToast();
   const router = useRouter();
   const params = useParams();
   const lang = params?.lang || "en";
@@ -17,19 +12,6 @@ export default function ArticleDetailsPage() {
   const { data: article, isLoading } = useGetArticleDetailsQuery(articleSlug, {
     skip: !articleSlug,
   });
-  const [updateArticle, { isLoading: isUpdating }] = useUpdateArticleMutation();
-
-  const handleStatusChange = async (newStatus: "draft" | "pending" | "approved" | "rejected") => {
-    if (!article) return;
-    try {
-      const formData = new FormData();
-      formData.append("status", newStatus);
-      await updateArticle({ id: article.id, data: formData }).unwrap();
-      toast(`Article status changed to ${newStatus}`, "success");
-    } catch (err: any) {
-      toast("Failed to update status", "error");
-    }
-  };
 
   if (isLoading) {
     return (
@@ -74,7 +56,7 @@ export default function ArticleDetailsPage() {
 
         <div className="flex gap-2">
           <button
-            onClick={() => router.push(`/${lang}/admin/article-management/edit-article?id=${article.id}`)}
+            onClick={() => router.push(`/${lang}/admin/article-management/edit-article?slug=${article.slug}`)}
             className="px-3.5 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl transition-all flex items-center gap-1.5 text-xs font-semibold"
           >
             <Edit2 className="w-4 h-4 text-indigo-400" />
@@ -211,44 +193,29 @@ export default function ArticleDetailsPage() {
             </div>
           </div>
 
-          {/* Publishing State Controller */}
+          {/* Publishing status */}
           <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-lg space-y-4">
             <h3 className="text-sm font-semibold text-slate-200 border-b border-slate-800/60 pb-3 flex items-center gap-1.5">
-              <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
-              Publishing status
+              <Activity className="w-4 h-4 text-indigo-400" />
+              Publishing Status
             </h3>
 
-            <div className="space-y-2">
-              <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                Change Live Status
-              </label>
-              <div className="grid grid-cols-4 gap-1 bg-slate-950 p-1 rounded-xl border border-slate-850">
-                {(["draft", "pending", "approved", "rejected"] as const).map((s) => (
-                  <button
-                    key={s}
-                    disabled={isUpdating}
-                    onClick={() => handleStatusChange(s)}
-                    className={`py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all flex items-center justify-center gap-1 ${
-                      article.status === s
-                        ? s === "approved"
-                          ? "bg-emerald-600 text-white"
-                          : s === "pending"
-                          ? "bg-amber-600 text-white"
-                          : s === "rejected"
-                          ? "bg-rose-600 text-white"
-                          : "bg-slate-700 text-white"
-                        : "text-slate-400 hover:text-slate-200"
-                    } ${isUpdating ? "opacity-50 cursor-not-allowed" : ""}`}
-                  >
-                    {isUpdating && article.status === s ? (
-                      <svg className="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                    ) : null}
-                    {s}
-                  </button>
-                ))}
+            <div className="space-y-1.5">
+              <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">
+                Current Status
+              </span>
+              <div>
+                <span className={`px-3 py-1 rounded-xl border text-xs font-bold uppercase inline-block ${
+                  article.status === "approved" || article.status === "published"
+                    ? "text-emerald-400 border-emerald-500/15 bg-emerald-500/5"
+                    : article.status === "pending"
+                    ? "text-amber-400 border-amber-500/15 bg-amber-500/5"
+                    : article.status === "rejected"
+                    ? "text-rose-400 border-rose-500/15 bg-rose-500/5"
+                    : "text-slate-400 border-slate-500/15 bg-slate-500/5"
+                }`}>
+                  {article.status || "draft"}
+                </span>
               </div>
             </div>
           </div>

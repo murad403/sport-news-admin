@@ -78,7 +78,7 @@ export default function AddArticlePage() {
       formData.append("content", values.content);
 
       if (values.image && values.image[0]) {
-        formData.append("display_image", values.image[0]);
+        formData.append("image", values.image[0]);
       }
 
       values.categories.forEach((catId) => {

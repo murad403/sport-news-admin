@@ -39,7 +39,7 @@ const articlesApi = baseApi.injectEndpoints({
         updateArticle: builder.mutation<Article, { id: string; data: FormData }>({
             query: ({ id, data }) => {
                 return {
-                    url: `/news/news/${id}/manage/`,
+                    url: `/news/${id}/manage/`,
                     method: "PATCH",
                     body: data
                 }
@@ -49,7 +49,7 @@ const articlesApi = baseApi.injectEndpoints({
         deleteArticle: builder.mutation<void, string>({
             query: (id) => {
                 return {
-                    url: `/news/news/${id}/manage/`,
+                    url: `/news/${id}/manage/`,
                     method: "DELETE",
                 }
             },
