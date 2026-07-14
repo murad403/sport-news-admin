@@ -1,28 +1,39 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { TrendingUp } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { NewsAnalyticsTrend } from "@/redux/features/dashboard/dashboard.type";
 
-const trendData = [
-  { name: "Mon", "AI Generated": 12, "User Submissions": 8 },
-  { name: "Tue", "AI Generated": 19, "User Submissions": 11 },
-  { name: "Wed", "AI Generated": 15, "User Submissions": 14 },
-  { name: "Thu", "AI Generated": 24, "User Submissions": 9 },
-  { name: "Fri", "AI Generated": 22, "User Submissions": 18 },
-  { name: "Sat", "AI Generated": 30, "User Submissions": 12 },
-  { name: "Sun", "AI Generated": 28, "User Submissions": 15 },
-];
+interface ArticleGenerationActivityProps {
+  trend?: NewsAnalyticsTrend[];
+}
 
-export default function ArticleGenerationActivity() {
+export default function ArticleGenerationActivity({ trend }: ArticleGenerationActivityProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Format trend data for chart
+  const chartData = (trend || []).map((item) => ({
+    displayDay: new Date(item.day).toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    }),
+    Articles: item.count,
+  }));
+
   return (
-    <div className="lg:col-span-2 p-6 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-lg flex flex-col">
+    <div className="lg:col-span-3 p-6 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-lg flex flex-col">
+      <style dangerouslySetInnerHTML={{ __html: `
+        .recharts-wrapper:focus,
+        .recharts-surface:focus,
+        .recharts-wrapper *:focus {
+          outline: none !important;
+          box-shadow: none !important;
+        }
+      `}} />
       <div className="flex items-center justify-between pb-4 border-b border-slate-800/50 mb-6">
         <div>
           <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
@@ -30,32 +41,26 @@ export default function ArticleGenerationActivity() {
             Article Generation Activity
           </h3>
           <p className="text-[10px] text-slate-400 mt-0.5">
-            Comparing AI-assisted writing against manual community drafts
+            Real-time trend analysis of published sports articles over time
           </p>
         </div>
       </div>
 
-      <div className="h-80 w-full flex-1">
-        {!mounted ? (
-          <div className="h-full bg-slate-900/20 border border-slate-800/40 animate-pulse rounded-xl flex items-center justify-center text-xs text-slate-500">
+      <div className="relative w-full h-[320px]">
+        {!mounted || !trend ? (
+          <div className="absolute inset-0 bg-slate-900/20 border border-slate-800/40 animate-pulse rounded-xl flex items-center justify-center text-xs text-slate-500">
             Loading activity data...
           </div>
+        ) : chartData.length === 0 ? (
+          <div className="absolute inset-0 border border-slate-800/40 rounded-xl flex items-center justify-center text-xs text-slate-500">
+            No activity trend data available
+          </div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="aiGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                </linearGradient>
-              </defs>
+          <ResponsiveContainer width="100%" height="100%" style={{ outline: "none" }}>
+            <BarChart style={{ outline: "none" }} data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.3} />
               <XAxis
-                dataKey="name"
+                dataKey="displayDay"
                 stroke="#475569"
                 fontSize={10}
                 tickLine={false}
@@ -66,6 +71,7 @@ export default function ArticleGenerationActivity() {
                 fontSize={10}
                 tickLine={false}
                 axisLine={false}
+                allowDecimals={false}
               />
               <Tooltip
                 contentStyle={{
@@ -75,25 +81,15 @@ export default function ArticleGenerationActivity() {
                   color: "#f1f5f9",
                   fontSize: "12px",
                 }}
+                cursor={{ fill: "#1e293b", opacity: 0.15 }}
               />
-              <Legend verticalAlign="top" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} />
-              <Area
-                type="monotone"
-                dataKey="AI Generated"
-                stroke="#6366f1"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#aiGradient)"
+              <Bar
+                dataKey="Articles"
+                fill="#6366f1"
+                radius={[4, 4, 0, 0]}
+                barSize={32}
               />
-              <Area
-                type="monotone"
-                dataKey="User Submissions"
-                stroke="#10b981"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#userGradient)"
-              />
-            </AreaChart>
+            </BarChart>
           </ResponsiveContainer>
         )}
       </div>

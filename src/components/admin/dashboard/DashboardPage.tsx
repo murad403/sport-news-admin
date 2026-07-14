@@ -5,20 +5,44 @@ import { Calendar, RefreshCw } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import DashboardStats from "./DashboardStats";
 import ArticleGenerationActivity from "./ArticleGenerationActivity";
-import CategoryShare from "./CategoryShare";
 import RecentActivities from "./RecentActivities";
+import {
+  useGetActivityQuery,
+  useGetNewsAnalyticsTrendQuery,
+  useGetSummaryQuery,
+} from "@/redux/features/dashboard/dashboard.api";
 
 export default function DashboardPage() {
   const { toast } = useToast();
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = () => {
+  const { data: summaryData, refetch: refetchSummary, isLoading: isSummaryLoading } = useGetSummaryQuery();
+  const { data: trendData, refetch: refetchTrend, isLoading: isTrendLoading } = useGetNewsAnalyticsTrendQuery();
+  const { data: activityData, refetch: refetchActivity, isLoading: isActivityLoading } = useGetActivityQuery();
+
+  const handleRefresh = async () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
+    try {
+      await Promise.all([
+        refetchSummary(),
+        refetchTrend(),
+        refetchActivity(),
+      ]);
       toast("Dashboard stats updated successfully", "success");
-    }, 1000);
+    } catch {
+      toast("Failed to update dashboard statistics", "error");
+    } finally {
+      setRefreshing(false);
+    }
   };
+
+  const displayDateRange = () => {
+    const today = new Date();
+    const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    return `${lastWeek.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })} - ${today.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+  };
+
+  const isPageLoading = isSummaryLoading || isTrendLoading || isActivityLoading;
 
   return (
     <div className="space-y-8">
@@ -35,11 +59,11 @@ export default function DashboardPage() {
         <div className="flex items-center gap-3 self-start sm:self-center">
           <div className="flex items-center gap-2 px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300">
             <Calendar className="w-3.5 h-3.5 text-slate-400" />
-            <span>Jul 2, 2026 - Jul 9, 2026</span>
+            <span>{displayDateRange()}</span>
           </div>
           <button
             onClick={handleRefresh}
-            disabled={refreshing}
+            disabled={refreshing || isPageLoading}
             className="p-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-slate-300 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
             title="Refresh statistics"
           >
@@ -53,16 +77,15 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Cards Section */}
-      <DashboardStats />
+      <DashboardStats summary={summaryData} />
 
       {/* Charts Visualization Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <ArticleGenerationActivity />
-        <CategoryShare />
+      <div className="grid grid-cols-1 gap-6">
+        <ArticleGenerationActivity trend={trendData} />
       </div>
 
       {/* Recent Activities Section */}
-      <RecentActivities />
+      <RecentActivities activities={activityData?.results} isLoading={isActivityLoading} />
     </div>
   );
 }
