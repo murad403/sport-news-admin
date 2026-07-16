@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Inbox, Settings, LogOut, Bell, Menu, X, Sparkles, BookOpen, CheckCircle2, AlertCircle, Trophy, Newspaper, GitPullRequestCreate, Users, Tag } from "lucide-react";
+import { LayoutDashboard, Inbox, Settings, LogOut, Bell, Menu, X, Sparkles, BookOpen, CheckCircle2, AlertCircle, Trophy, Newspaper, GitPullRequestCreate, Users, Tag, Mailbox } from "lucide-react";
 import { ToastProvider, useToast } from "@/components/ui/toast"
 import { removeToken } from "@/lib/auth";
 import { useGetProfileQuery } from "@/redux/features/auth/auth.api";
@@ -136,6 +136,12 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       href: `/${lang}/admin/user-management`,
       icon: Users,
       match: (path: string) => path.includes("/user-management"),
+    },
+    {
+      name: "NewsLetter",
+      href: `/${lang}/admin/newsletter`,
+      icon: Mailbox,
+      match: (path: string) => path.includes("/newsletter"),
     },
     {
       name: "Settings",
