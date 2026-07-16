@@ -134,7 +134,7 @@ export default function SportsTagsPage() {
               <tr className="border-b border-slate-800/40 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                 <th className="pb-3 px-2">Name</th>
                 <th className="pb-3 px-2">Slug</th>
-                <th className="pb-3 px-2">News Count</th>
+                <th className="pb-3 px-2 whitespace-nowrap">News Count</th>
                 <th className="pb-3 px-2 text-right">Actions</th>
               </tr>
             </thead>
@@ -174,7 +174,7 @@ export default function SportsTagsPage() {
                     </td>
 
                     <td className="py-4 px-2">
-                      <span className="text-slate-400 font-mono text-[11px] bg-slate-950 px-2 py-1 rounded-lg border border-slate-900">
+                      <span className="text-slate-400 whitespace-nowrap font-mono text-[11px] bg-slate-950 px-2 py-1 rounded-lg border border-slate-900">
                         {tag.slug}
                       </span>
                     </td>

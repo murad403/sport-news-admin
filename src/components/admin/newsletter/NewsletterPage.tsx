@@ -136,7 +136,7 @@ export default function NewsletterPage() {
               <tr className="border-b border-slate-800/40 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                 <th className="pb-3 px-2">Subscriber</th>
                 <th className="pb-3 px-2">Status</th>
-                <th className="pb-3 px-2">Subscribed At</th>
+                <th className="pb-3 px-2 whitespace-nowrap">Subscribed At</th>
                 <th className="pb-3 px-2 text-right">Actions</th>
               </tr>
             </thead>

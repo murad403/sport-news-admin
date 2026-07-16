@@ -105,7 +105,7 @@ export default function ArticleManagementPage() {
               <tr className="border-b border-slate-800/40 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                 <th className="pb-3 px-2">Article</th>
                 <th className="pb-3 px-2">Classification</th>
-                <th className="pb-3 px-2">Author & Source</th>
+                <th className="pb-3 px-2 whitespace-nowrap">Author & Source</th>
                 <th className="pb-3 px-2">Views</th>
                 <th className="pb-3 px-2">Status</th>
                 <th className="pb-3 px-2 text-right">Actions</th>

@@ -145,7 +145,7 @@ export default function SportsCategoriesPage() {
               <tr className="border-b border-slate-800/40 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                 <th className="pb-3 px-2">Name</th>
                 <th className="pb-3 px-2">Slug</th>
-                <th className="pb-3 px-2">News Count</th>
+                <th className="pb-3 px-2 whitespace-nowrap">News Count</th>
                 <th className="pb-3 px-2 text-right">Actions</th>
               </tr>
             </thead>

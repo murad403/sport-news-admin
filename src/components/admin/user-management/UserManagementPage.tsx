@@ -194,7 +194,7 @@ export default function UserManagementPage() {
                 <th className="pb-3 px-2">Member</th>
                 <th className="pb-3 px-2">Role</th>
                 <th className="pb-3 px-2">Status</th>
-                <th className="pb-3 px-2">Registered On</th>
+                <th className="pb-3 px-2 whitespace-nowrap">Registered On</th>
                 <th className="pb-3 px-2 text-right">Actions</th>
               </tr>
             </thead>
@@ -233,7 +233,7 @@ export default function UserManagementPage() {
                             className="w-9 h-9 rounded-full border border-slate-750 object-cover shadow-sm shrink-0"
                           />
                         ) : (
-                          <div className="w-9 h-9 rounded-full bg-slate-850 border border-slate-755 flex items-center justify-center font-bold text-xs text-indigo-300 shadow-sm uppercase shrink-0">
+                          <div className="w-9 h-9 rounded-full bg-slate-850 border border-slate-755 flex items-center justify-center font-bold text-xs text-indigo-300 shadow-sm uppercase shrink-0 ">
                             {user.name.split(" ").map(w => w[0]).join("").slice(0, 2)}
                           </div>
                         )}
@@ -262,7 +262,7 @@ export default function UserManagementPage() {
                     </td>
 
                     <td className="py-4 px-2 text-slate-500 font-sans">
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 whitespace-nowrap">
                         <Calendar className="w-3.5 h-3.5 text-slate-600" />
                         {new Date(user.created_at).toLocaleDateString("en-US", {
                           month: "short",
