@@ -322,7 +322,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
         {/* Navbar */}
-        <header className="h-16 flex items-center justify-between px-4 md:px-8 border-b border-slate-800/40 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-40">
+        <header className="py-3 flex items-center justify-between px-4 md:px-8 border-b border-slate-800/40 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-40">
           <div className="flex items-center gap-4">
             {/* Collapse Sidebar Button (Desktop) */}
             <button
@@ -347,87 +347,6 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
           <div className="flex items-center gap-3">
 
-            {/* Notifications Panel */}
-            <div className="relative">
-              <button
-                onClick={() => {
-                  setShowNotifications(!showNotifications);
-                  setShowProfileDropdown(false);
-                }}
-                className={`p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 rounded-xl border border-slate-800/40 transition-all relative ${showNotifications ? "bg-slate-800 text-slate-100" : ""
-                  }`}
-              >
-                <Bell className="w-4 h-4" />
-                {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-indigo-500 ring-2 ring-slate-950 animate-pulse" />
-                )}
-              </button>
-
-              {showNotifications && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)} />
-                  <div className="absolute right-0 mt-3 w-80 bg-slate-900 border border-slate-800/80 shadow-2xl rounded-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="flex items-center justify-between pb-3 border-b border-slate-800/60 mb-2">
-                      <h4 className="text-sm font-semibold text-slate-200">Notifications</h4>
-                      {unreadCount > 0 && (
-                        <button
-                          onClick={markAllRead}
-                          className="text-[10px] font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
-                        >
-                          Mark all read
-                        </button>
-                      )}
-                    </div>
-                    <div className="space-y-1.5 max-h-64 overflow-y-auto">
-                      {notifications.length === 0 ? (
-                        <div className="py-8 text-center text-xs text-slate-500 flex flex-col items-center justify-center gap-2">
-                          <CheckCircle2 className="w-8 h-8 text-slate-600" />
-                          <span>All caught up!</span>
-                        </div>
-                      ) : (
-                        notifications.map((n) => (
-                          <div
-                            key={n.id}
-                            className={`p-2.5 rounded-xl border transition-all relative group cursor-pointer ${n.read
-                              ? "bg-slate-900/40 border-transparent hover:bg-slate-800/20"
-                              : "bg-indigo-600/5 border-indigo-500/10 hover:bg-indigo-600/10 text-slate-200"
-                              }`}
-                            onClick={() => {
-                              // Mark single notification read
-                              setNotifications((prev) =>
-                                prev.map((item) => (item.id === n.id ? { ...item, read: true } : item))
-                              );
-                            }}
-                          >
-                            <div className="flex items-start gap-2.5">
-                              {n.type === "submission" && <Inbox className="w-4 h-4 text-emerald-400 mt-0.5" />}
-                              {n.type === "ai" && <Sparkles className="w-4 h-4 text-indigo-400 mt-0.5" />}
-                              {n.type === "system" && <AlertCircle className="w-4 h-4 text-amber-400 mt-0.5" />}
-                              <div className="flex-1 min-w-0 pr-4">
-                                <p className={`text-xs truncate ${n.read ? "text-slate-300" : "font-semibold text-slate-200"}`}>
-                                  {n.title}
-                                </p>
-                                <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">
-                                  {n.desc}
-                                </p>
-                                <span className="text-[9px] text-slate-600 block mt-1">{n.time}</span>
-                              </div>
-                            </div>
-                            <button
-                              onClick={(e) => clearNotification(n.id, e)}
-                              className="absolute top-2.5 right-2.5 p-1 text-slate-600 hover:text-slate-300 rounded opacity-0 group-hover:opacity-100 transition-all hover:bg-slate-800"
-                              title="Dismiss"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
 
             {/* Profile Avatar Panel */}
             <div className="relative">
