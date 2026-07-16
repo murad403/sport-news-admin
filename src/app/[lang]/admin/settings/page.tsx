@@ -400,7 +400,7 @@ export default function SettingsPage() {
                     type="submit"
                     className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98]"
                   >
-                    Update Password passphrase
+                    Update Password
                   </button>
                 </div>
               </form>
