@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Inbox, Settings, LogOut, Bell, Menu, X, Sparkles, BookOpen, CheckCircle2, AlertCircle, Trophy, Newspaper, GitPullRequestCreate, Users, Tag, Mailbox } from "lucide-react";
+import { LayoutDashboard, Settings, LogOut, Menu, X, Sparkles, Trophy, Newspaper, GitPullRequestCreate, Users, Tag, Mailbox } from "lucide-react";
 import { ToastProvider, useToast } from "@/components/ui/toast"
 import { removeToken } from "@/lib/auth";
 import { useGetProfileQuery } from "@/redux/features/auth/auth.api";
+import Image from "next/image";
+import logo from "@/assets/logo.png";
 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -29,41 +31,11 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // Notification states
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: "1",
-      title: "New submission approval request",
-      desc: "Marcus Vance submitted 'Mbappé shines in Champions League'",
-      time: "5m ago",
-      type: "submission",
-      read: false,
-    },
-    {
-      id: "2",
-      title: "AI Generation Success",
-      desc: "Article draft on F1 British Grand Prix completed",
-      time: "20m ago",
-      type: "ai",
-      read: false,
-    },
-    {
-      id: "3",
-      title: "System Status Alert",
-      desc: "Web scraper successfully indexed 14 new feeds",
-      time: "1h ago",
-      type: "system",
-      read: true,
-    },
-  ]);
-
   // Profile dropdown state
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
   // Close dropdowns on route changes
   useEffect(() => {
-    setShowNotifications(false);
     setShowProfileDropdown(false);
     setIsMobileOpen(false);
   }, [pathname]);
@@ -163,18 +135,13 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           }`}
       >
         {/* Sidebar Header */}
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800/40">
-          <Link href={`/${lang}/admin`} className="flex items-center gap-3 overflow-hidden">
-            <div className="p-2 rounded-lg bg-linear-to-tr from-indigo-600 to-indigo-400 text-white shadow-lg shadow-indigo-500/20 shrink-0">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            {!isCollapsed && (
-              <span className="font-bold text-lg bg-clip-text text-transparent bg-linear-to-r from-white via-slate-100 to-slate-400 tracking-tight whitespace-nowrap">
-                SportNews Admin
-              </span>
-            )}
-          </Link>
-        </div>
+        {!isCollapsed && (
+          <div className="py-2 flex items-center justify-between px-6 border-b border-slate-800/40">
+            <Link href={`/${lang}/admin`} className="bg-white flex items-center justify-center p-1 rounded-lg border border-slate-200 w-full full overflow-hidden">
+              <Image src={logo} alt="SportNews Logo" className="w-full h-full object-contain" />
+            </Link>
+          </div>
+        )}
 
         {/* Navigation Links */}
         <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
@@ -203,7 +170,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-slate-800/40 bg-slate-950/20">
+        <div className={`border-t border-slate-800/40 bg-slate-950/20 transition-all duration-300 ${isCollapsed ? "p-2" : "p-4"}`}>
           {!isCollapsed ? (
             <div className="flex items-center justify-between p-2 rounded-lg bg-slate-800/30 border border-slate-800/30">
               <div className="flex items-center gap-3 min-w-0">
@@ -254,10 +221,9 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             </button>
 
             <Link href={`/${lang}/admin`} className="flex items-center gap-3 mb-8" onClick={() => setIsMobileOpen(false)}>
-              <div className="p-2 rounded-lg bg-linear-to-tr from-indigo-600 to-indigo-400 text-white shadow-lg shrink-0">
-                <BookOpen className="w-5 h-5" />
+              <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-white border border-slate-200 p-1">
+                <Image src={logo} alt="SportNews Logo" className="w-full h-full object-contain" />
               </div>
-              <span className="font-bold text-lg text-white tracking-tight">SportNews Admin</span>
             </Link>
 
             <nav className="flex-1 space-y-1.5">
@@ -340,7 +306,6 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               <button
                 onClick={() => {
                   setShowProfileDropdown(!showProfileDropdown);
-                  setShowNotifications(false);
                 }}
                 className="w-10 h-10 rounded-full bg-indigo-600/20 border-2 border-indigo-500/50 flex items-center justify-center font-bold text-xs text-indigo-300 hover:ring-2 hover:ring-indigo-500/30 transition-all overflow-hidden"
               >
