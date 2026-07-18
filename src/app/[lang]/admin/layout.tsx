@@ -68,19 +68,6 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     setIsMobileOpen(false);
   }, [pathname]);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-    toast("All notifications marked as read", "success");
-  };
-
-  const clearNotification = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-    toast("Notification dismissed");
-  };
-
   const handleLogout = async () => {
     try {
       await removeToken();
@@ -355,7 +342,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                   setShowProfileDropdown(!showProfileDropdown);
                   setShowNotifications(false);
                 }}
-                className="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center font-bold text-xs text-indigo-300 hover:ring-2 hover:ring-indigo-500/30 transition-all overflow-hidden"
+                className="w-10 h-10 rounded-full bg-indigo-600/20 border-2 border-indigo-500/50 flex items-center justify-center font-bold text-xs text-indigo-300 hover:ring-2 hover:ring-indigo-500/30 transition-all overflow-hidden"
               >
                 {profile?.avatar ? (
                   <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
@@ -396,7 +383,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Content Body */}
-        <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto pb-16">
+        <main className="flex-1 p-4 md:p-8 max-w-[1500px] w-full mx-auto pb-16">
           {children}
         </main>
       </div>
