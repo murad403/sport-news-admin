@@ -137,7 +137,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         {/* Sidebar Header */}
         {!isCollapsed && (
           <div className="py-2 flex items-center justify-between px-6 border-b border-slate-800/40">
-            <Link href={`/${lang}/admin`} className="bg-white flex items-center justify-center p-1 rounded-lg border border-slate-200 w-full full overflow-hidden">
+            <Link href={`/${lang}/admin`} className="bg-white flex items-center justify-center p-1 rounded-lg border border-slate-200 w-full overflow-hidden">
               <Image src={logo} alt="SportNews Logo" className="w-full h-full object-contain" />
             </Link>
           </div>
@@ -152,6 +152,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.name}
                 href={item.href}
+                title={isCollapsed ? item.name : undefined}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group relative ${active
                   ? "bg-indigo-600/15 border border-indigo-500/30 text-indigo-300 font-medium"
                   : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/40 border border-transparent"
@@ -159,11 +160,6 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               >
                 <Icon className={`w-5 h-5 transition-transform duration-200 group-hover:scale-105 ${active ? "text-indigo-400" : "text-slate-400"}`} />
                 {!isCollapsed && <span className="text-sm">{item.name}</span>}
-                {isCollapsed && (
-                  <div className="absolute left-full ml-3 px-2 py-1 rounded bg-slate-950 border border-slate-800 text-xs text-slate-200 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50">
-                    {item.name}
-                  </div>
-                )}
               </Link>
             );
           })}
