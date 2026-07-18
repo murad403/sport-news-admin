@@ -44,9 +44,9 @@ export default function EditCategoryModal({
             <Edit3 className="w-5 h-5 text-indigo-400" />
             <h3 className="text-sm font-bold text-white">Edit Category</h3>
           </div>
-          <button 
+          <button
             type="button"
-            onClick={onClose} 
+            onClick={onClose}
             disabled={isLoading}
             className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -65,7 +65,7 @@ export default function EditCategoryModal({
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
               disabled={isLoading}
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500/50 rounded-lg text-xs text-slate-200 placeholder-slate-600 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               required
               autoFocus
             />
@@ -76,14 +76,14 @@ export default function EditCategoryModal({
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="flex-1 py-2 border border-slate-800 hover:bg-slate-900 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 py-2 border border-slate-800 hover:bg-slate-900 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+              className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
             >
               {isLoading ? (
                 <>

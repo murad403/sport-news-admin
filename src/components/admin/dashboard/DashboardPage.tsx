@@ -57,20 +57,19 @@ export default function DashboardPage() {
 
         {/* Action Controls */}
         <div className="flex items-center gap-3 self-start sm:self-center">
-          <div className="flex items-center gap-2 px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300">
+          <div className="flex items-center gap-2 px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300">
             <Calendar className="w-3.5 h-3.5 text-slate-400" />
             <span>{displayDateRange()}</span>
           </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing || isPageLoading}
-            className="p-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-slate-300 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="p-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
             title="Refresh statistics"
           >
             <RefreshCw
-              className={`w-4 h-4 ${
-                refreshing ? "animate-spin text-indigo-400" : "group-hover:rotate-45 transition-transform"
-              }`}
+              className={`w-4 h-4 ${refreshing ? "animate-spin text-indigo-400" : "group-hover:rotate-45 transition-transform"
+                }`}
             />
           </button>
         </div>

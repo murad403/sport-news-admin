@@ -93,13 +93,13 @@ export default function UserRequestPage() {
             Review, approve, or reject articles submitted by general users from the frontend website.
           </p>
         </div>
-        <div className="px-4 py-2.5 bg-slate-900/60 border border-slate-800 rounded-xl text-xs font-semibold text-slate-350 self-start sm:self-center">
+        <div className="px-4 py-2.5 bg-slate-900/60 border border-slate-800 rounded-lg text-xs font-semibold text-slate-350 self-start sm:self-center">
           Total Pending Requests: <span className="text-indigo-400 ml-1 font-bold">{totalRequests}</span>
         </div>
       </div>
 
       {/* Filter and search bar */}
-      <div className="p-4 rounded-xl bg-slate-900/40 backdrop-blur-md border border-slate-800/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-4 rounded-lg bg-slate-900/40 backdrop-blur-md border border-slate-800/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
@@ -108,7 +108,7 @@ export default function UserRequestPage() {
             placeholder="Search by author or title..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-950/60 border border-slate-850 hover:border-slate-800 focus:border-indigo-500/50 rounded-xl text-xs text-slate-100 placeholder-slate-500 outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-950/60 border border-slate-850 hover:border-slate-800 focus:border-indigo-500/50 rounded-lg text-xs text-slate-100 placeholder-slate-500 outline-none transition-all"
           />
         </div>
       </div>

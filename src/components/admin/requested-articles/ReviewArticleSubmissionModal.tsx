@@ -31,7 +31,7 @@ export default function ReviewArticleSubmissionModal({
 
   const categoryName = request.categories?.map((c) => c.name).join(", ") || "No Category";
   const displayDate = request.created_at ? new Date(request.created_at).toLocaleDateString() : "Unknown";
-  
+
   const statusStyles: Record<string, string> = {
     pending: "text-amber-400 border-amber-500/10 bg-amber-500/5",
     approved: "text-emerald-400 border-emerald-500/10 bg-emerald-500/5",
@@ -45,7 +45,7 @@ export default function ReviewArticleSubmissionModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden z-10 animate-in zoom-in-95 duration-200">
-        
+
         {/* Top Banner Image */}
         <div className="relative h-40 w-full overflow-hidden bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 border-b border-slate-800/40">
           {(!imgError && (request.display_image || request.image_url)) ? (
@@ -85,7 +85,7 @@ export default function ReviewArticleSubmissionModal({
           </div>
 
           {/* Author info card */}
-          <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-950/60 border border-slate-855 mb-5 text-xs text-slate-300">
+          <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-slate-950/60 border border-slate-855 mb-5 text-xs text-slate-300">
             <div>
               <p className="text-[10px] text-slate-500 font-semibold uppercase">Author</p>
               <p className="font-semibold text-slate-200 mt-0.5">{request.author_name}</p>
@@ -107,7 +107,7 @@ export default function ReviewArticleSubmissionModal({
             </div>
             <div>
               <h4 className="text-[10px] font-semibold text-slate-550 uppercase tracking-wider mb-1">Submitted Content</h4>
-              <p className="text-slate-350 whitespace-pre-line leading-relaxed p-4 bg-slate-950/20 rounded-xl border border-slate-855">
+              <p className="text-slate-350 whitespace-pre-line leading-relaxed p-4 bg-slate-950/20 rounded-lg border border-slate-855">
                 {request.content}
               </p>
             </div>
@@ -117,7 +117,7 @@ export default function ReviewArticleSubmissionModal({
           <div className="pt-4 border-t border-slate-800/60 mt-6 flex items-center justify-end gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-slate-950 border border-slate-800 hover:bg-slate-900 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all"
+              className="px-4 py-2 bg-slate-950 border border-slate-800 hover:bg-slate-900 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all"
             >
               Close Reader
             </button>
@@ -125,13 +125,13 @@ export default function ReviewArticleSubmissionModal({
               <>
                 <button
                   onClick={onReject}
-                  className="px-4 py-2 border border-rose-500/20 hover:bg-rose-500/10 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 transition-all"
+                  className="px-4 py-2 border border-rose-500/20 hover:bg-rose-500/10 rounded-lg text-xs font-semibold text-rose-400 hover:text-rose-300 transition-all"
                 >
                   Reject
                 </button>
                 <button
                   onClick={onApprove}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-semibold text-white transition-all"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white transition-all"
                 >
                   Approve Submission
                 </button>

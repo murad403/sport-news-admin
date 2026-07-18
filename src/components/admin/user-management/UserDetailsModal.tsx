@@ -26,8 +26,8 @@ export default function UserDetailsModal({ isOpen, onClose, userId }: UserDetail
             <Info className="w-5 h-5 text-indigo-400" />
             <h3 className="text-sm font-bold text-white">User Details</h3>
           </div>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
           >
             <X className="w-4 h-4" />
@@ -63,18 +63,17 @@ export default function UserDetailsModal({ isOpen, onClose, userId }: UserDetail
                   <span className="px-2.5 py-0.5 text-[9px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/20 rounded-md tracking-wider uppercase">
                     {user.role}
                   </span>
-                  <span className={`px-2 py-0.5 text-[9px] font-bold rounded-md border tracking-wider uppercase flex items-center gap-1 ${
-                    user.is_active 
-                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
+                  <span className={`px-2 py-0.5 text-[9px] font-bold rounded-md border tracking-wider uppercase flex items-center gap-1 ${user.is_active
+                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                       : "bg-rose-500/10 text-rose-400 border-rose-500/20"
-                  }`}>
+                    }`}>
                     {user.is_active ? "Active" : "Inactive"}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-3.5 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 text-xs">
+            <div className="space-y-3.5 bg-slate-950/60 p-4 rounded-lg border border-slate-800/80 text-xs">
               <div className="flex justify-between items-start gap-4">
                 <span className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">Bio</span>
                 <span className="text-slate-300 text-right max-w-[240px] wrap-break-word">
@@ -105,7 +104,7 @@ export default function UserDetailsModal({ isOpen, onClose, userId }: UserDetail
             <div className="pt-2">
               <button
                 onClick={onClose}
-                className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700/60 hover:border-slate-700 text-xs font-semibold text-slate-200 rounded-xl transition-all"
+                className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700/60 hover:border-slate-700 text-xs font-semibold text-slate-200 rounded-lg transition-all"
               >
                 Close Profile
               </button>

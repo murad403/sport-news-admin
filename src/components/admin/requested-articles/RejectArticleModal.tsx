@@ -62,7 +62,7 @@ export default function RejectArticleModal({
               onChange={(e) => setRejectionReason(e.target.value)}
               rows={3}
               disabled={isLoading}
-              className="w-full p-3 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-rose-500/30 focus:border-rose-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none transition-all resize-none disabled:opacity-50"
+              className="w-full p-3 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-rose-500/30 focus:border-rose-500/50 rounded-lg text-xs text-slate-200 placeholder-slate-600 outline-none transition-all resize-none disabled:opacity-50"
               required
             />
           </div>
@@ -72,14 +72,14 @@ export default function RejectArticleModal({
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="flex-1 py-2 border border-slate-800 hover:bg-slate-900 disabled:opacity-50 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all"
+              className="flex-1 py-2 border border-slate-800 hover:bg-slate-900 disabled:opacity-50 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800 rounded-xl text-xs font-semibold text-white transition-all shadow-md shadow-rose-600/10 flex items-center justify-center gap-1.5"
+              className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800 rounded-lg text-xs font-semibold text-white transition-all shadow-md shadow-rose-600/10 flex items-center justify-center gap-1.5"
             >
               {isLoading ? (
                 <>

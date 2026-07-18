@@ -37,7 +37,7 @@ export default function DeleteTagModal({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 py-2 border border-slate-800 hover:bg-slate-900 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-2 border border-slate-800 hover:bg-slate-900 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
@@ -45,7 +45,7 @@ export default function DeleteTagModal({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 rounded-xl text-xs font-semibold text-white transition-all shadow-md shadow-rose-600/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+            className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 rounded-lg text-xs font-semibold text-white transition-all shadow-md shadow-rose-600/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
           >
             {isLoading ? (
               <>

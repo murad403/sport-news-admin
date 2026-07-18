@@ -1,10 +1,9 @@
 "use client";
-
 import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { User, KeyRound, ShieldAlert, Upload } from "lucide-react";
+import { User, KeyRound, ShieldAlert, Upload, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import {
   useGetProfileQuery,
@@ -40,6 +39,11 @@ export default function SettingsPage() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
+  // Password visibility states
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -50,7 +54,7 @@ export default function SettingsPage() {
   }, [profile]);
 
   // Form setup for Password
-  const { register, handleSubmit, watch, reset, formState: { errors },} = useForm<PasswordFormValues>({
+  const { register, handleSubmit, watch, reset, formState: { errors }, } = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordChangeSchema),
     defaultValues: {
       currentPassword: "",
@@ -64,7 +68,7 @@ export default function SettingsPage() {
   const getPasswordStrength = (pass: string) => {
     if (!pass) return { label: "", score: 0, color: "bg-slate-800" };
     if (pass.length < 6) return { label: "Too Short", score: 1, color: "bg-rose-500" };
-    
+
     let score = 2;
     const hasNum = /\d/.test(pass);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
@@ -94,7 +98,7 @@ export default function SettingsPage() {
       if (avatarFile) {
         formData.append("avatar", avatarFile);
       }
-      
+
       await updateProfile(formData).unwrap();
       toast("Profile details updated successfully!", "success");
     } catch (err: any) {
@@ -126,7 +130,7 @@ export default function SettingsPage() {
     } catch (err: any) {
       const errorData = err?.data;
       let errorMsg = "Failed to change password.";
-      
+
       if (errorData && typeof errorData === "object") {
         if (Array.isArray(errorData.old_password)) {
           errorMsg = errorData.old_password[0];
@@ -136,7 +140,7 @@ export default function SettingsPage() {
           errorMsg = errorData.message;
         }
       }
-      
+
       toast(errorMsg, "error");
     }
   };
@@ -167,22 +171,20 @@ export default function SettingsPage() {
         <div className="md:col-span-1 p-2 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/60 shadow-lg flex flex-row md:flex-col gap-1.5 w-full">
           <button
             onClick={() => setActiveTab("profile")}
-            className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-semibold transition-all ${
-              activeTab === "profile"
+            className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-lg text-xs font-semibold transition-all ${activeTab === "profile"
                 ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
                 : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
-            }`}
+              }`}
           >
             <User className="w-4 h-4 shrink-0" />
             Profile Info
           </button>
           <button
             onClick={() => setActiveTab("password")}
-            className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-semibold transition-all ${
-              activeTab === "password"
+            className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-lg text-xs font-semibold transition-all ${activeTab === "password"
                 ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
                 : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
-            }`}
+              }`}
           >
             <KeyRound className="w-4 h-4 shrink-0" />
             Security & Password
@@ -243,7 +245,7 @@ export default function SettingsPage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-100 placeholder-slate-550 outline-none transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-xs text-slate-100 placeholder-slate-550 outline-none transition-all"
                     />
                   </div>
 
@@ -256,7 +258,7 @@ export default function SettingsPage() {
                       type="email"
                       value={profile?.email || ""}
                       disabled
-                      className="w-full px-4 py-2.5 bg-slate-950/30 border border-slate-850/60 rounded-xl text-xs text-slate-500 outline-none cursor-not-allowed"
+                      className="w-full px-4 py-2.5 bg-slate-950/30 border border-slate-850/60 rounded-lg text-xs text-slate-500 outline-none cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -271,7 +273,7 @@ export default function SettingsPage() {
                       type="text"
                       value={profile?.role || ""}
                       disabled
-                      className="w-full px-4 py-2.5 bg-slate-950/30 border border-slate-850/60 rounded-xl text-xs text-slate-500 outline-none cursor-not-allowed"
+                      className="w-full px-4 py-2.5 bg-slate-950/30 border border-slate-850/60 rounded-lg text-xs text-slate-500 outline-none cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -281,7 +283,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={profileSaving}
-                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98] flex items-center gap-1.5"
+                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 text-white text-xs font-semibold rounded-lg transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98] flex items-center gap-1.5"
                   >
                     {profileSaving ? (
                       <>
@@ -314,16 +316,28 @@ export default function SettingsPage() {
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                     Current Password
                   </label>
-                  <input
-                    type="password"
-                    placeholder="••••••••"
-                    className={`w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-xs text-slate-100 placeholder-slate-600 outline-none transition-all ${
-                      errors.currentPassword
-                        ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
-                        : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
-                    }`}
-                    {...register("currentPassword")}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showCurrentPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className={`w-full pl-4 pr-10 py-2.5 bg-slate-950/50 focus:bg-slate-950 border rounded-lg text-xs text-slate-100 placeholder-slate-600 outline-none transition-all ${errors.currentPassword
+                          ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
+                          : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
+                        }`}
+                      {...register("currentPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 focus:outline-none"
+                    >
+                      {showCurrentPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                   {errors.currentPassword && (
                     <span className="flex items-center gap-1.5 text-[10px] text-rose-400 mt-1.5">
                       <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
@@ -337,16 +351,28 @@ export default function SettingsPage() {
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                     New Password
                   </label>
-                  <input
-                    type="password"
-                    placeholder="••••••••"
-                    className={`w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-xs text-slate-100 placeholder-slate-600 outline-none transition-all ${
-                      errors.newPassword
-                        ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
-                        : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
-                    }`}
-                    {...register("newPassword")}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className={`w-full pl-4 pr-10 py-2.5 bg-slate-950/50 focus:bg-slate-950 border rounded-lg text-xs text-slate-100 placeholder-slate-600 outline-none transition-all ${errors.newPassword
+                          ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
+                          : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
+                        }`}
+                      {...register("newPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 focus:outline-none"
+                    >
+                      {showNewPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                   {errors.newPassword && (
                     <span className="flex items-center gap-1.5 text-[10px] text-rose-400 mt-1.5">
                       <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
@@ -376,16 +402,28 @@ export default function SettingsPage() {
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                     Confirm New Password
                   </label>
-                  <input
-                    type="password"
-                    placeholder="••••••••"
-                    className={`w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-xs text-slate-100 placeholder-slate-600 outline-none transition-all ${
-                      errors.confirmPassword
-                        ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
-                        : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
-                    }`}
-                    {...register("confirmPassword")}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className={`w-full pl-4 pr-10 py-2.5 bg-slate-950/50 focus:bg-slate-950 border rounded-lg text-xs text-slate-100 placeholder-slate-600 outline-none transition-all ${errors.confirmPassword
+                          ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
+                          : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
+                        }`}
+                      {...register("confirmPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 focus:outline-none"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                   {errors.confirmPassword && (
                     <span className="flex items-center gap-1.5 text-[10px] text-rose-400 mt-1.5">
                       <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
@@ -398,7 +436,7 @@ export default function SettingsPage() {
                 <div className="pt-4 border-t border-slate-800/20 flex justify-end">
                   <button
                     type="submit"
-                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98]"
+                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98]"
                   >
                     Update Password
                   </button>

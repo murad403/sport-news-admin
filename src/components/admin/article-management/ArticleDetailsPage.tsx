@@ -16,7 +16,7 @@ export default function ArticleDetailsPage() {
   });
 
   if (isLoading) {
-    return <Loading title="Loading article details..."/>
+    return <Loading title="Loading article details..." />
   }
 
   if (!article) {
@@ -42,7 +42,7 @@ export default function ArticleDetailsPage() {
       <div className="flex items-center justify-between">
         <button
           onClick={() => router.push(`/${lang}/admin/article-management`)}
-          className="px-3.5 py-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white rounded-xl transition-all flex items-center gap-1.5 text-xs font-semibold"
+          className="px-3.5 py-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white rounded-lg transition-all flex items-center gap-1.5 text-xs font-semibold"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Articles
@@ -51,7 +51,7 @@ export default function ArticleDetailsPage() {
         <div className="flex gap-2">
           <button
             onClick={() => router.push(`/${lang}/admin/article-management/edit-article?slug=${article.slug}`)}
-            className="px-3.5 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl transition-all flex items-center gap-1.5 text-xs font-semibold"
+            className="px-3.5 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg transition-all flex items-center gap-1.5 text-xs font-semibold"
           >
             <Edit2 className="w-4 h-4 text-indigo-400" />
             Edit Article
@@ -199,15 +199,14 @@ export default function ArticleDetailsPage() {
                 Current Status
               </span>
               <div>
-                <span className={`px-3 py-1 rounded-xl border text-xs font-bold uppercase inline-block ${
-                  article.status === "approved" || article.status === "published"
+                <span className={`px-3 py-1 rounded-lg border text-xs font-bold uppercase inline-block ${article.status === "approved" || article.status === "published"
                     ? "text-emerald-400 border-emerald-500/15 bg-emerald-500/5"
                     : article.status === "pending"
-                    ? "text-amber-400 border-amber-500/15 bg-amber-500/5"
-                    : article.status === "rejected"
-                    ? "text-rose-400 border-rose-500/15 bg-rose-500/5"
-                    : "text-slate-400 border-slate-500/15 bg-slate-500/5"
-                }`}>
+                      ? "text-amber-400 border-amber-500/15 bg-amber-500/5"
+                      : article.status === "rejected"
+                        ? "text-rose-400 border-rose-500/15 bg-rose-500/5"
+                        : "text-slate-400 border-slate-500/15 bg-slate-500/5"
+                  }`}>
                   {article.status || "draft"}
                 </span>
               </div>

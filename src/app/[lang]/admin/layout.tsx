@@ -178,7 +178,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         {/* Sidebar Header */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800/40">
           <Link href={`/${lang}/admin`} className="flex items-center gap-3 overflow-hidden">
-            <div className="p-2 rounded-xl bg-linear-to-tr from-indigo-600 to-indigo-400 text-white shadow-lg shadow-indigo-500/20 shrink-0">
+            <div className="p-2 rounded-lg bg-linear-to-tr from-indigo-600 to-indigo-400 text-white shadow-lg shadow-indigo-500/20 shrink-0">
               <BookOpen className="w-5 h-5" />
             </div>
             {!isCollapsed && (
@@ -198,7 +198,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative ${active
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group relative ${active
                   ? "bg-indigo-600/15 border border-indigo-500/30 text-indigo-300 font-medium"
                   : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/40 border border-transparent"
                   }`}
@@ -218,7 +218,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-slate-800/40 bg-slate-950/20">
           {!isCollapsed ? (
-            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-800/30 border border-slate-800/30">
+            <div className="flex items-center justify-between p-2 rounded-lg bg-slate-800/30 border border-slate-800/30">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-9 h-9 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center font-bold text-indigo-300 shrink-0 shadow-inner overflow-hidden">
                   {profile?.avatar ? (
@@ -244,7 +244,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             <div className="flex justify-center">
               <button
                 onClick={handleLogout}
-                className="p-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all"
+                className="p-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
                 title="Logout"
               >
                 <LogOut className="w-5 h-5" />
@@ -267,7 +267,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             </button>
 
             <Link href={`/${lang}/admin`} className="flex items-center gap-3 mb-8" onClick={() => setIsMobileOpen(false)}>
-              <div className="p-2 rounded-xl bg-linear-to-tr from-indigo-600 to-indigo-400 text-white shadow-lg shrink-0">
+              <div className="p-2 rounded-lg bg-linear-to-tr from-indigo-600 to-indigo-400 text-white shadow-lg shrink-0">
                 <BookOpen className="w-5 h-5" />
               </div>
               <span className="font-bold text-lg text-white tracking-tight">SportNews Admin</span>
@@ -282,7 +282,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsMobileOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${active
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${active
                       ? "bg-indigo-600/15 border border-indigo-500/30 text-indigo-300 font-medium"
                       : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/40 border border-transparent"
                       }`}
@@ -327,14 +327,14 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             {/* Collapse Sidebar Button (Desktop) */}
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="hidden md:flex p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 rounded-xl border border-slate-800/40 transition-colors"
+              className="hidden md:flex p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 rounded-lg border border-slate-800/40 transition-colors"
             >
               <Menu className="w-4 h-4" />
             </button>
             {/* Hamburger (Mobile) */}
             <button
               onClick={() => setIsMobileOpen(true)}
-              className="md:hidden p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 rounded-xl border border-slate-800/40 transition-colors"
+              className="md:hidden p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 rounded-lg border border-slate-800/40 transition-colors"
             >
               <Menu className="w-4 h-4" />
             </button>
@@ -355,7 +355,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                   setShowProfileDropdown(!showProfileDropdown);
                   setShowNotifications(false);
                 }}
-                className="w-8 h-8 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center font-bold text-xs text-indigo-300 hover:ring-2 hover:ring-indigo-500/30 transition-all overflow-hidden"
+                className="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center font-bold text-xs text-indigo-300 hover:ring-2 hover:ring-indigo-500/30 transition-all overflow-hidden"
               >
                 {profile?.avatar ? (
                   <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
@@ -375,14 +375,14 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                     <div className="space-y-0.5">
                       <Link
                         href={`/${lang}/admin/settings`}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-slate-300 hover:bg-slate-800/60 hover:text-slate-100 transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-slate-300 hover:bg-slate-800/60 hover:text-slate-100 transition-colors"
                       >
                         <Settings className="w-4 h-4 text-slate-400" />
                         Settings
                       </Link>
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors text-left"
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors text-left"
                       >
                         <LogOut className="w-4 h-4" />
                         Logout

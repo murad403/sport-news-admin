@@ -72,9 +72,9 @@ export default function ForgotPasswordPage() {
             type="email"
             placeholder="name@company.com"
             disabled={loading}
-            className={`w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all ${errors.email
-                ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
-                : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
+            className={`w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border rounded-lg text-sm text-slate-100 placeholder-slate-500 outline-none transition-all ${errors.email
+              ? "border-rose-500/50 focus:ring-1 focus:ring-rose-500/30"
+              : "border-slate-800 focus:ring-1 focus:ring-indigo-500/50"
               }`}
             {...register("email")}
           />
@@ -90,7 +90,7 @@ export default function ForgotPasswordPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 px-4 bg-linear-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 disabled:from-indigo-800 disabled:to-indigo-900 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98] flex items-center justify-center gap-2"
+          className="w-full py-3 px-4 bg-linear-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 disabled:from-indigo-800 disabled:to-indigo-900 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98] flex items-center justify-center gap-2"
         >
           {loading ? (
             <>

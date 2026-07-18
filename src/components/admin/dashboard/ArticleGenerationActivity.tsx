@@ -26,7 +26,8 @@ export default function ArticleGenerationActivity({ trend }: ArticleGenerationAc
 
   return (
     <div className="lg:col-span-3 p-6 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-lg flex flex-col">
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .recharts-wrapper:focus,
         .recharts-surface:focus,
         .recharts-wrapper *:focus {
@@ -48,11 +49,11 @@ export default function ArticleGenerationActivity({ trend }: ArticleGenerationAc
 
       <div className="relative w-full h-[320px]">
         {!mounted || !trend ? (
-          <div className="absolute inset-0 bg-slate-900/20 border border-slate-800/40 animate-pulse rounded-xl flex items-center justify-center text-xs text-slate-500">
+          <div className="absolute inset-0 bg-slate-900/20 border border-slate-800/40 animate-pulse rounded-lg flex items-center justify-center text-xs text-slate-500">
             Loading activity data...
           </div>
         ) : chartData.length === 0 ? (
-          <div className="absolute inset-0 border border-slate-800/40 rounded-xl flex items-center justify-center text-xs text-slate-500">
+          <div className="absolute inset-0 border border-slate-800/40 rounded-lg flex items-center justify-center text-xs text-slate-500">
             No activity trend data available
           </div>
         ) : (

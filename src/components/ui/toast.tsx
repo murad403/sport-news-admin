@@ -61,7 +61,7 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
 
   return (
     <div
-      className={`pointer-events-auto flex items-start justify-between gap-3 p-4 rounded-xl border shadow-lg transition-all duration-300 transform translate-y-0 scale-100 animate-in fade-in slide-in-from-top-4 ${styles[toast.type]}`}
+      className={`pointer-events-auto flex items-start justify-between gap-3 p-4 rounded-lg border shadow-lg transition-all duration-300 transform translate-y-0 scale-100 animate-in fade-in slide-in-from-top-4 ${styles[toast.type]}`}
     >
       <div className="flex items-center gap-3">
         {icons[toast.type]}

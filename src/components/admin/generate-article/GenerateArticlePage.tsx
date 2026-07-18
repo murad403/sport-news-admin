@@ -73,10 +73,10 @@ export default function GenerateArticlePage() {
       if (words.length >= targetCount) {
         return words.slice(0, targetCount).join(" ") + "...";
       }
-      
+
       let currentText = text;
       let currentWords = words.length;
-      
+
       const englishFiller = [
         "\n\nFurthermore, this development has sparked intense debates among experts who question the long-term sustainability of such high-performance regimes.",
         "\n\nIn addition, fans are expressing their excitement across social media platforms, making it one of the most talked-about topics of the week.",
@@ -251,7 +251,7 @@ export default function GenerateArticlePage() {
                 value={promptTitle}
                 onChange={(e) => setPromptTitle(e.target.value)}
                 disabled={status === "generating"}
-                className="w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all"
+                className="w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-sm text-slate-100 placeholder-slate-500 outline-none transition-all"
               />
             </div>
 
@@ -267,14 +267,14 @@ export default function GenerateArticlePage() {
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
                     disabled={status === "generating"}
-                    className="w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 outline-none transition-all cursor-pointer appearance-none"
+                    className="w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-sm text-slate-100 outline-none transition-all cursor-pointer appearance-none"
                   >
                     <option value="English" className="bg-slate-900 text-slate-100">English</option>
                     <option value="Italian" className="bg-slate-900 text-slate-100">Italian</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                     </svg>
                   </div>
                 </div>
@@ -291,7 +291,7 @@ export default function GenerateArticlePage() {
                   value={wordCount}
                   onChange={(e) => setWordCount(e.target.value)}
                   disabled={status === "generating"}
-                  className="w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all"
+                  className="w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-sm text-slate-100 placeholder-slate-500 outline-none transition-all"
                   min={50}
                   max={5000}
                 />
@@ -309,7 +309,7 @@ export default function GenerateArticlePage() {
                 value={promptDescription}
                 onChange={(e) => setPromptDescription(e.target.value)}
                 disabled={status === "generating"}
-                className="w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all resize-none"
+                className="w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-sm text-slate-100 placeholder-slate-500 outline-none transition-all resize-none"
               />
             </div>
 
@@ -317,7 +317,7 @@ export default function GenerateArticlePage() {
             <button
               type="submit"
               disabled={status === "generating"}
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/10 active:scale-[0.98] flex items-center justify-center gap-2 mt-4"
+              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 text-white font-semibold rounded-lg text-sm transition-all shadow-lg shadow-indigo-600/10 active:scale-[0.98] flex items-center justify-center gap-2 mt-4"
             >
               <Sparkles className={`w-4 h-4 ${status === "generating" ? "animate-spin text-indigo-400" : ""}`} />
               {status === "generating" ? "Generating Draft..." : "Generate AI Article"}
@@ -359,8 +359,8 @@ export default function GenerateArticlePage() {
 
               {/* Pulsing skeleton structures */}
               <div className="space-y-3.5 animate-pulse">
-                <div className="h-7 bg-slate-800/60 rounded-xl w-3/4" />
-                <div className="h-4.5 bg-slate-800/60 rounded-xl w-1/4" />
+                <div className="h-7 bg-slate-800/60 rounded-lg w-3/4" />
+                <div className="h-4.5 bg-slate-800/60 rounded-lg w-1/4" />
                 <div className="space-y-2 pt-4">
                   <div className="h-4 bg-slate-800/40 rounded-lg w-full" />
                   <div className="h-4 bg-slate-800/40 rounded-lg w-full" />
@@ -387,7 +387,7 @@ export default function GenerateArticlePage() {
               {/* Dynamic Image Preview & Add Image Input Section */}
               <div className="space-y-2.5">
                 {articleImage ? (
-                  <div className="relative h-36 w-full rounded-xl overflow-hidden border border-slate-800/85 group animate-in fade-in duration-300">
+                  <div className="relative h-36 w-full rounded-lg overflow-hidden border border-slate-800/85 group animate-in fade-in duration-300">
                     <img
                       src={articleImage}
                       alt="Article Cover"
@@ -403,7 +403,7 @@ export default function GenerateArticlePage() {
                     </button>
                   </div>
                 ) : (
-                  <div className="relative border border-dashed border-slate-800 hover:border-indigo-500/40 rounded-xl p-6 flex flex-col items-center justify-center gap-1.5 cursor-pointer bg-slate-955/20 hover:bg-slate-950/40 transition-all group">
+                  <div className="relative border border-dashed border-slate-800 hover:border-indigo-500/40 rounded-lg p-6 flex flex-col items-center justify-center gap-1.5 cursor-pointer bg-slate-955/20 hover:bg-slate-950/40 transition-all group">
                     <input
                       type="file"
                       accept="image/*"
@@ -430,7 +430,7 @@ export default function GenerateArticlePage() {
                   type="text"
                   value={generatedTitle}
                   onChange={(e) => setGeneratedTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950/40 border border-slate-800/60 focus:border-indigo-500/40 rounded-xl text-xs font-semibold text-slate-100 outline-none"
+                  className="w-full px-3 py-2 bg-slate-950/40 border border-slate-800/60 focus:border-indigo-500/40 rounded-lg text-xs font-semibold text-slate-100 outline-none"
                 />
               </div>
 
@@ -443,7 +443,7 @@ export default function GenerateArticlePage() {
                   value={generatedContent}
                   onChange={(e) => setGeneratedContent(e.target.value)}
                   rows={8}
-                  className="w-full flex-1 p-3 bg-slate-950/40 border border-slate-800/60 focus:border-indigo-500/40 rounded-xl text-xs text-slate-350 leading-relaxed outline-none resize-none overflow-y-auto no-scrollbar"
+                  className="w-full flex-1 p-3 bg-slate-950/40 border border-slate-800/60 focus:border-indigo-500/40 rounded-lg text-xs text-slate-350 leading-relaxed outline-none resize-none overflow-y-auto no-scrollbar"
                 />
               </div>
 
@@ -485,14 +485,14 @@ export default function GenerateArticlePage() {
               <div className="pt-3 border-t border-slate-800/60 flex items-center justify-between gap-4">
                 <button
                   onClick={() => setStatus("idle")}
-                  className="px-4 py-2 border border-slate-800 hover:bg-slate-900 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors"
+                  className="px-4 py-2 border border-slate-800 hover:bg-slate-900 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors"
                 >
                   Discard Draft
                 </button>
                 <button
                   onClick={handlePublish}
                   disabled={publishing}
-                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-emerald-600/10 active:scale-[0.98] flex items-center gap-2"
+                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 text-white text-xs font-semibold rounded-lg transition-all shadow-md shadow-emerald-600/10 active:scale-[0.98] flex items-center gap-2"
                 >
                   {publishing ? (
                     <>

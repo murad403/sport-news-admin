@@ -63,9 +63,9 @@ export default function EditUserModal({
             <Edit2 className="w-5 h-5 text-indigo-400" />
             <h3 className="text-sm font-bold text-white">Edit User Profile</h3>
           </div>
-          <button 
+          <button
             type="button"
-            onClick={onClose} 
+            onClick={onClose}
             disabled={isLoading}
             className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -83,7 +83,7 @@ export default function EditUserModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isLoading}
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500/50 rounded-lg text-xs text-slate-200 placeholder-slate-600 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               required
             />
           </div>
@@ -96,7 +96,7 @@ export default function EditUserModal({
               value={role}
               onChange={(e) => setRole(e.target.value as any)}
               disabled={isLoading}
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500/50 rounded-lg text-xs text-slate-200 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <option value="reader">Reader</option>
               <option value="author">Author</option>
@@ -115,7 +115,7 @@ export default function EditUserModal({
               disabled={isLoading}
               rows={3}
               placeholder="A brief bio..."
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/30 focus:border-indigo-500/50 rounded-lg text-xs text-slate-200 placeholder-slate-600 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed resize-none"
             />
           </div>
 
@@ -164,14 +164,14 @@ export default function EditUserModal({
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="flex-1 py-2 border border-slate-800 hover:bg-slate-900 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 py-2 border border-slate-800 hover:bg-slate-900 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+              className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
             >
               {isLoading ? (
                 <>

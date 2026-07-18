@@ -97,7 +97,7 @@ export default function DashboardStats({ summary }: DashboardStatsProps) {
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-400">{stat.title}</span>
-              <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.border.split(" ")[2]} shadow-inner`}>
+              <div className={`p-2.5 rounded-lg ${stat.bg} ${stat.border.split(" ")[2]} shadow-inner`}>
                 <Icon className="w-4.5 h-4.5" />
               </div>
             </div>

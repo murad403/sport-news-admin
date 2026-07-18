@@ -63,14 +63,14 @@ export default function ArticleManagementPage() {
         </div>
         <Link
           href={`/${lang}/admin/article-management/add-article`}
-          className="self-start sm:self-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98] flex items-center gap-1.5"
+          className="self-start sm:self-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98] flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
           Add Article
         </Link>
       </div>
 
-      <div className="p-4 rounded-xl bg-slate-900/40 backdrop-blur-md border border-slate-800/60 flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="p-4 rounded-lg bg-slate-900/40 backdrop-blur-md border border-slate-800/60 flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:max-w-xs">
           <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
           <input
@@ -78,7 +78,7 @@ export default function ArticleManagementPage() {
             placeholder="Search title..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-950/60 border border-slate-850 hover:border-slate-800 focus:border-indigo-500/50 rounded-xl text-xs text-slate-100 placeholder-slate-500 outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-950/60 border border-slate-850 hover:border-slate-800 focus:border-indigo-500/50 rounded-lg text-xs text-slate-100 placeholder-slate-500 outline-none transition-all"
           />
         </div>
 
@@ -86,7 +86,7 @@ export default function ArticleManagementPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="w-full md:w-48 px-3.5 py-2.5 bg-slate-950 border border-slate-850 focus:border-indigo-500/50 rounded-xl text-xs text-slate-350 outline-none transition-all cursor-pointer"
+            className="w-full md:w-48 px-3.5 py-2.5 bg-slate-950 border border-slate-850 focus:border-indigo-500/50 rounded-lg  text-xs text-slate-350 outline-none transition-all cursor-pointer"
           >
             <option value="">All Categories</option>
             {categoriesList.map((c) => (

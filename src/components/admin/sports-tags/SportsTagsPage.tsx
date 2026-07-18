@@ -95,7 +95,7 @@ export default function SportsTagsPage() {
         </div>
         <button
           onClick={() => setIsAddOpen(true)}
-          className="self-start sm:self-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98] flex items-center gap-1.5"
+          className="self-start sm:self-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98] flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
           Add Tag
@@ -108,13 +108,13 @@ export default function SportsTagsPage() {
             <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Total Tags</span>
             <p className="text-2xl font-bold text-white mt-1">{totalTags}</p>
           </div>
-          <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-300">
+          <div className="p-2.5 rounded-lg bg-indigo-500/10 text-indigo-300">
             <TagIcon className="w-4.5 h-4.5" />
           </div>
         </div>
       </div>
 
-      <div className="p-4 rounded-xl bg-slate-900/40 backdrop-blur-md border border-slate-800/60 flex items-center justify-between gap-4">
+      <div className="p-4 rounded-lg bg-slate-900/40 backdrop-blur-md border border-slate-800/60 flex items-center justify-between gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
           <input
@@ -122,7 +122,7 @@ export default function SportsTagsPage() {
             placeholder="Search tags or slugs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-950/60 border border-slate-850 hover:border-slate-800 focus:border-indigo-500/50 rounded-xl text-xs text-slate-100 placeholder-slate-500 outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-950/60 border border-slate-850 hover:border-slate-800 focus:border-indigo-500/50 rounded-lg text-xs text-slate-100 placeholder-slate-500 outline-none transition-all"
           />
         </div>
       </div>

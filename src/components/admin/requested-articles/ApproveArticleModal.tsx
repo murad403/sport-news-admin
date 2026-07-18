@@ -36,14 +36,14 @@ export default function ApproveArticleModal({
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 py-2 border border-slate-800 hover:bg-slate-900 disabled:opacity-50 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all"
+            className="flex-1 py-2 border border-slate-800 hover:bg-slate-900 disabled:opacity-50 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 rounded-xl text-xs font-semibold text-white transition-all flex items-center justify-center gap-1.5"
+            className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 rounded-lg text-xs font-semibold text-white transition-all flex items-center justify-center gap-1.5"
           >
             {isLoading ? (
               <>

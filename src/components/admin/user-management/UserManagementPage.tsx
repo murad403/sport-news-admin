@@ -124,13 +124,13 @@ export default function UserManagementPage() {
             <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Total Members</span>
             <p className="text-2xl font-bold text-white mt-1">{totalUsers}</p>
           </div>
-          <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-300">
+          <div className="p-2.5 rounded-lg bg-indigo-500/10 text-indigo-300">
             <Users className="w-4.5 h-4.5" />
           </div>
         </div>
       </div>
 
-      <div className="p-4 rounded-xl bg-slate-900/40 backdrop-blur-md border border-slate-800/60 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="p-4 rounded-lg bg-slate-900/40 backdrop-blur-md border border-slate-800/60 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
           <input
@@ -138,7 +138,7 @@ export default function UserManagementPage() {
             placeholder="Search users by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-950/60 border border-slate-850 hover:border-slate-800 focus:border-indigo-500/50 rounded-xl text-xs text-slate-100 placeholder-slate-500 outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-950/60 border border-slate-850 hover:border-slate-800 focus:border-indigo-500/50 rounded-lg text-xs text-slate-100 placeholder-slate-500 outline-none transition-all"
           />
         </div>
 
@@ -148,7 +148,7 @@ export default function UserManagementPage() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="px-3 py-2 bg-slate-950 border border-slate-850 rounded-xl text-xs text-slate-200 outline-none transition-all cursor-pointer"
+              className="px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg text-xs text-slate-200 outline-none transition-all cursor-pointer"
             >
               <option value="">--</option>
               <option value="reader">Reader</option>
@@ -163,7 +163,7 @@ export default function UserManagementPage() {
             <select
               value={isActiveFilter}
               onChange={(e) => setIsActiveFilter(e.target.value)}
-              className="px-3 py-2 bg-slate-950 border border-slate-850 rounded-xl text-xs text-slate-200 outline-none transition-all cursor-pointer"
+              className="px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg text-xs text-slate-200 outline-none transition-all cursor-pointer"
             >
               <option value="">--</option>
               <option value="true">true</option>
@@ -176,7 +176,7 @@ export default function UserManagementPage() {
             <select
               value={isEmailVerifiedFilter}
               onChange={(e) => setIsEmailVerifiedFilter(e.target.value)}
-              className="px-3 py-2 bg-slate-950 border border-slate-850 rounded-xl text-xs text-slate-200 outline-none transition-all cursor-pointer"
+              className="px-3 py-2 bg-slate-950 border border-slate-850 rounded-lg text-xs text-slate-200 outline-none transition-all cursor-pointer"
             >
               <option value="">--</option>
               <option value="true">true</option>
@@ -249,14 +249,12 @@ export default function UserManagementPage() {
                     </td>
 
                     <td className="py-4 px-2">
-                      <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border flex items-center gap-1 w-fit ${
-                        user.is_active 
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
+                      <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border flex items-center gap-1 w-fit ${user.is_active
+                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                           : "bg-rose-500/10 text-rose-400 border-rose-500/20"
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${
-                          user.is_active ? "bg-emerald-400 animate-pulse" : "bg-rose-400"
-                        }`} />
+                        }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${user.is_active ? "bg-emerald-400 animate-pulse" : "bg-rose-400"
+                          }`} />
                         {user.is_active ? "Active" : "Inactive"}
                       </span>
                     </td>

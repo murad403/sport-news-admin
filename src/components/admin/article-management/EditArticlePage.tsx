@@ -163,7 +163,7 @@ export default function EditArticlePage() {
         <button
           type="button"
           onClick={() => router.push(`/${lang}/admin/article-management`)}
-          className="p-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white rounded-xl transition-all"
+          className="p-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white rounded-lg transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
@@ -194,7 +194,7 @@ export default function EditArticlePage() {
               type="text"
               {...register("title")}
               className={`w-full px-4 py-3 bg-slate-950/50 focus:bg-slate-950 border ${errors.title ? "border-rose-500/50" : "border-slate-800"
-                } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-sm text-slate-100 placeholder-slate-500 outline-none transition-all`}
+                } focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-sm text-slate-100 placeholder-slate-500 outline-none transition-all`}
             />
             {errors.title && (
               <p className="text-[10px] text-rose-450 font-semibold flex items-center gap-1 mt-1">
@@ -212,7 +212,7 @@ export default function EditArticlePage() {
             <textarea
               rows={3}
               {...register("description")}
-              className="w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all resize-none"
+              className="w-full px-4 py-2.5 bg-slate-950/50 focus:bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-xs text-slate-200 outline-none transition-all resize-none"
             />
           </div>
 
@@ -225,7 +225,7 @@ export default function EditArticlePage() {
               rows={12}
               {...register("content")}
               className={`w-full p-4 bg-slate-950/50 focus:bg-slate-950 border ${errors.content ? "border-rose-500/50" : "border-slate-800"
-                } focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none resize-none no-scrollbar`}
+                } focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-xs text-slate-200 outline-none resize-none no-scrollbar`}
             />
             {errors.content && (
               <p className="text-[10px] text-rose-455 font-semibold flex items-center gap-1 mt-1">
@@ -241,7 +241,7 @@ export default function EditArticlePage() {
               Display Image
             </label>
             <div className="flex items-center gap-4">
-              <label className="cursor-pointer flex items-center gap-2 px-4 py-2.5 bg-slate-950 hover:bg-slate-900 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 transition-all">
+              <label className="cursor-pointer flex items-center gap-2 px-4 py-2.5 bg-slate-950 hover:bg-slate-900 border border-slate-800 rounded-lg text-xs font-semibold text-slate-300 transition-all">
                 <Upload className="w-4 h-4 text-indigo-400" />
                 Choose Image File
                 <input
@@ -256,9 +256,9 @@ export default function EditArticlePage() {
                   <img
                     src={imagePreview}
                     alt="Upload Preview"
-                    className="w-16 h-16 rounded-xl object-cover border border-slate-800 shadow-md transition-transform hover:scale-105"
+                    className="w-16 h-16 rounded-lg object-cover border border-slate-800 shadow-md transition-transform hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center text-[10px] text-white font-semibold">
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center text-[10px] text-white font-semibold">
                     Enlarge
                   </div>
                 </div>
@@ -286,7 +286,7 @@ export default function EditArticlePage() {
                   const val = e.target.value;
                   setValue("categories", val ? [val] : [], { shouldValidate: true });
                 }}
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all cursor-pointer"
+                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-xs text-slate-200 outline-none transition-all cursor-pointer"
               >
                 <option value="">Select a category</option>
                 {mergedCategories.map((cat) => (
@@ -322,11 +322,11 @@ export default function EditArticlePage() {
                   onBlur={() => {
                     setTimeout(() => setShowTagSuggestions(false), 200);
                   }}
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 placeholder-slate-600 outline-none transition-all"
+                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-xs text-slate-200 placeholder-slate-600 outline-none transition-all"
                 />
 
                 {showTagSuggestions && tagSearch.trim() !== "" && (
-                  <div className="absolute left-0 right-0 mt-1.5 max-h-40 overflow-y-auto bg-slate-950 border border-slate-800 rounded-xl z-20 shadow-2xl divide-y divide-slate-900/60 no-scrollbar">
+                  <div className="absolute left-0 right-0 mt-1.5 max-h-40 overflow-y-auto bg-slate-950 border border-slate-800 rounded-lg z-20 shadow-2xl divide-y divide-slate-900/60 no-scrollbar">
                     {tagsList
                       .filter(
                         (t) =>
@@ -399,7 +399,7 @@ export default function EditArticlePage() {
               <input
                 type="text"
                 {...register("language")}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-xl text-xs text-slate-200 outline-none transition-all"
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:ring-1 focus:ring-indigo-500/50 rounded-lg text-xs text-slate-200 outline-none transition-all"
               />
             </div>
 
@@ -411,7 +411,7 @@ export default function EditArticlePage() {
               <select
                 value={isPublishedValue ? "true" : "false"}
                 onChange={(e) => setValue("is_published", e.target.value === "true")}
-                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-855 rounded-xl text-xs text-slate-200 outline-none transition-all cursor-pointer"
+                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-855 rounded-lg text-xs text-slate-200 outline-none transition-all cursor-pointer"
               >
                 <option value="true">true</option>
                 <option value="false">false</option>
@@ -426,7 +426,7 @@ export default function EditArticlePage() {
               <select
                 value={isFeaturedValue ? "true" : "false"}
                 onChange={(e) => setValue("is_featured", e.target.value === "true")}
-                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-855 rounded-xl text-xs text-slate-200 outline-none transition-all cursor-pointer"
+                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-855 rounded-lg text-xs text-slate-200 outline-none transition-all cursor-pointer"
               >
                 <option value="false">false</option>
                 <option value="true">true</option>
@@ -439,14 +439,14 @@ export default function EditArticlePage() {
             <button
               type="button"
               onClick={() => router.push(`/${lang}/admin/article-management`)}
-              className="flex-1 py-3 border border-slate-800 hover:bg-slate-900 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all text-center"
+              className="flex-1 py-3 border border-slate-800 hover:bg-slate-900 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all text-center"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 rounded-xl text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 flex items-center justify-center gap-1.5"
+              className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 rounded-lg text-xs font-semibold text-white transition-all shadow-md shadow-indigo-600/10 flex items-center justify-center gap-1.5"
             >
               {isSubmitting ? (
                 <>
@@ -482,7 +482,7 @@ export default function EditArticlePage() {
             <img
               src={imagePreview}
               alt="Enlarged Preview"
-              className="max-w-full max-h-[80vh] rounded-xl object-contain"
+              className="max-w-full max-h-[80vh] rounded-lg object-contain"
             />
           </div>
         </div>
