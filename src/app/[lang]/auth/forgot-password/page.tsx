@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
     <div className="w-full bg-slate-900/40 backdrop-blur-xl border border-slate-800/80 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
       {/* Back Button */}
       <Link
-        href={`/${lang}/auth/signin`}
+        href={`/${lang}/auth/sign-in`}
         className="absolute top-6 left-6 text-slate-400 hover:text-slate-100 transition-colors flex items-center gap-1.5 text-xs font-semibold"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -116,7 +116,7 @@ export default function ForgotPasswordPage() {
               Sending OTP...
             </>
           ) : (
-            "Request Reset Link"
+            "Send OTP"
           )}
         </button>
       </form>
